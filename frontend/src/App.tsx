@@ -144,9 +144,9 @@ function App() {
 
   return (
     <div className="min-h-screen bg-[radial-gradient(circle_at_top,_rgba(59,130,246,0.14),_rgba(255,255,255,0)_30%),linear-gradient(180deg,_#ffffff_0%,_#f8fbff_58%,_#ffffff_100%)] text-slate-900">
-      <div className="mx-auto max-w-6xl px-4 pb-24 pt-5 sm:px-6 lg:px-8">
-        <header className="sticky top-4 z-20 rounded-full border border-white/70 bg-white/92 px-5 py-3 shadow-[0_10px_30px_rgba(15,23,42,0.07)] backdrop-blur">
-          <div className="flex items-center justify-between gap-4">
+      <header className="sticky top-4 z-20 px-4 sm:px-6 lg:px-10">
+        <div className="mx-auto w-full rounded-full border border-white/70 bg-white/92 px-5 py-3 shadow-[0_10px_30px_rgba(15,23,42,0.07)] backdrop-blur">
+          <div className="mx-auto flex w-full max-w-[1680px] items-center justify-between gap-4">
             <div className="flex items-center gap-3">
               <div className="flex size-10 items-center justify-center rounded-2xl bg-blue-600 text-white shadow-[0_14px_30px_rgba(59,130,246,0.3)]">
                 <Video size={18} />
@@ -174,41 +174,43 @@ function App() {
               开通 VIP
             </button>
           </div>
-        </header>
+        </div>
+      </header>
 
+      <div className="mx-auto max-w-6xl px-4 pb-24 pt-5 sm:px-6 lg:px-8">
         <main>
           <section className="flex min-h-[calc(100vh-5.5rem)] flex-col items-center justify-center py-14 lg:min-h-[calc(100vh-2rem)] lg:pb-28 lg:pt-20">
-            <div className="w-full max-w-4xl text-center">
+            <div className="w-full max-w-[72rem] text-center">
               <div className="mx-auto inline-flex items-center gap-2 rounded-full border border-emerald-100 bg-white px-4 py-2 text-sm text-slate-500 shadow-sm">
                 <BadgeCheck className="text-emerald-500" size={16} />
                 支持 1800+ 平台，核心下载一步完成
               </div>
 
-              <h1 className="mt-7 text-4xl font-black tracking-[-0.06em] text-slate-950 sm:text-5xl lg:text-6xl">
+              <h1 className="mt-7 text-4xl font-black tracking-[-0.06em] text-slate-950 sm:text-5xl lg:text-[4.6rem]">
                 万能视频下载器，
                 <span className="text-blue-500">一键保存</span>
               </h1>
 
-              <p className="mx-auto mt-5 max-w-3xl text-base leading-8 text-slate-500 sm:text-lg">
+              <p className="mx-auto mt-5 max-w-[56rem] text-base leading-8 text-slate-500 sm:text-[1.32rem] sm:leading-9">
                 粘贴视频链接，智能解析，支持多种清晰度下载。YouTube、Bilibili、抖音、TikTok
                 等热门站点，随时随地，想下就下。
               </p>
 
-              <div className="mx-auto mt-9 max-w-3xl rounded-[2rem] border border-white/80 bg-white/95 p-3 shadow-[0_24px_64px_rgba(15,23,42,0.08)]">
+              <div className="mx-auto mt-9 max-w-[60rem] rounded-[2.2rem] border border-white/80 bg-white/95 p-4 shadow-[0_24px_64px_rgba(15,23,42,0.08)]">
                 <div className="flex flex-col gap-3 sm:flex-row">
-                  <label className="flex min-w-0 flex-1 items-center gap-3 rounded-[1.35rem] border border-slate-200 bg-white px-4 py-4 shadow-sm transition focus-within:border-blue-200 focus-within:ring-4 focus-within:ring-blue-100">
+                  <label className="flex min-w-0 flex-1 items-center gap-3 rounded-[1.45rem] border border-slate-200 bg-white px-5 py-4 shadow-sm transition focus-within:border-blue-200 focus-within:ring-4 focus-within:ring-blue-100">
                     <Link2 className="shrink-0 text-slate-400" size={18} />
                     <input
                       value={url}
                       onChange={(event) => setUrl(event.target.value)}
                       placeholder="https://www.douyin.com/video/..."
-                      className="w-full min-w-0 bg-transparent text-sm text-slate-900 outline-none placeholder:text-slate-400 sm:text-base"
+                      className="w-full min-w-0 bg-transparent text-sm text-slate-900 outline-none placeholder:text-slate-400 sm:text-lg"
                     />
                   </label>
                   <button
                     onClick={handleParse}
                     disabled={isParsing}
-                    className="inline-flex items-center justify-center gap-2 rounded-[1.35rem] bg-blue-500 px-6 py-4 text-sm font-semibold text-white shadow-[0_16px_32px_rgba(59,130,246,0.28)] transition hover:bg-blue-600 disabled:cursor-not-allowed disabled:bg-blue-300 sm:px-8 sm:text-base"
+                    className="inline-flex items-center justify-center gap-2 rounded-[1.45rem] bg-blue-500 px-7 py-4 text-sm font-semibold text-white shadow-[0_16px_32px_rgba(59,130,246,0.28)] transition hover:bg-blue-600 disabled:cursor-not-allowed disabled:bg-blue-300 sm:min-w-[12rem] sm:px-9 sm:text-lg"
                   >
                     {isParsing ? <LoaderCircle className="animate-spin" size={18} /> : <Sparkles size={18} />}
                     {isParsing ? '解析中' : '解析视频'}
@@ -229,7 +231,7 @@ function App() {
                 </div>
               ) : null}
 
-              <div className="mx-auto mt-12 w-full max-w-3xl rounded-[2rem] border border-slate-200 bg-white/96 p-4 shadow-[0_28px_64px_rgba(15,23,42,0.09)] sm:p-5">
+              <div className="mx-auto mt-12 w-full max-w-[62rem] rounded-[2.2rem] border border-slate-200 bg-white/96 p-5 shadow-[0_28px_64px_rgba(15,23,42,0.09)] sm:p-6">
                 {result ? (
                   <ResultCard
                     result={result}
