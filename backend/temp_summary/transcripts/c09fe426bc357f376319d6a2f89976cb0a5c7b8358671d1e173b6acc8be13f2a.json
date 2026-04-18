@@ -1,0 +1,82 @@
+{
+  "source_type": "speech_to_text",
+  "language": "zh",
+  "fallback_used": true,
+  "segments": [
+    {
+      "start_seconds": 0,
+      "end_seconds": 7,
+      "text": "大家好,记得一键三连加个关注。谢谢。用手机观看B站视频时,如何打开字幕。"
+    },
+    {
+      "start_seconds": 7,
+      "end_seconds": 15,
+      "text": "首先找到全屏按钮。选择下方的字幕,然后根据需要选择相应的字幕。"
+    },
+    {
+      "start_seconds": 15,
+      "end_seconds": 19,
+      "text": "本视频上传了中文和英文两种字幕。"
+    },
+    {
+      "start_seconds": 19,
+      "end_seconds": 25,
+      "text": "点击英文就会出现英文字幕。"
+    },
+    {
+      "start_seconds": 25,
+      "end_seconds": 30,
+      "text": "点击中文字幕,就是中英双语字幕。同时还有一个双语字幕。"
+    },
+    {
+      "start_seconds": 30,
+      "end_seconds": 32,
+      "text": "这是B站的一个新功能"
+    },
+    {
+      "start_seconds": 32,
+      "end_seconds": 37,
+      "text": "打开这个按钮后,可以选择主字幕和副字幕,根据自己的需要进行观看"
+    },
+    {
+      "start_seconds": 37,
+      "end_seconds": 40,
+      "text": "打开字幕以后,会发现一个字幕设置"
+    },
+    {
+      "start_seconds": 40,
+      "end_seconds": 42,
+      "text": "这是B站新增的一个功能"
+    },
+    {
+      "start_seconds": 42,
+      "end_seconds": 46,
+      "text": "点击字幕设置会发现多了一个字幕拖拽的功能"
+    },
+    {
+      "start_seconds": 46,
+      "end_seconds": 48,
+      "text": "打开这个按钮"
+    },
+    {
+      "start_seconds": 48,
+      "end_seconds": 51,
+      "text": "那么在观看视频时"
+    },
+    {
+      "start_seconds": 51,
+      "end_seconds": 56,
+      "text": "可以把字幕拖拽到自己需要的任意位置"
+    },
+    {
+      "start_seconds": 56,
+      "end_seconds": 59,
+      "text": "字幕拖拽功能在输屏播放时也同样适用"
+    },
+    {
+      "start_seconds": 59,
+      "end_seconds": 65,
+      "text": "在竖屏播放时,字幕也可以正常显示"
+    }
+  ]
+}

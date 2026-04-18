@@ -1,0 +1,972 @@
+{
+  "source_type": "speech_to_text",
+  "language": "zh",
+  "fallback_used": true,
+  "segments": [
+    {
+      "start_seconds": 0,
+      "end_seconds": 3,
+      "text": "今天說一下Codex註冊機的整個流程"
+    },
+    {
+      "start_seconds": 3,
+      "end_seconds": 5,
+      "text": "也是UP在網上找了各種教程"
+    },
+    {
+      "start_seconds": 5,
+      "end_seconds": 8,
+      "text": "錄出來給像我一樣的小白看一下怎麼用"
+    },
+    {
+      "start_seconds": 8,
+      "end_seconds": 9,
+      "text": "大神就不用看了"
+    },
+    {
+      "start_seconds": 9,
+      "end_seconds": 10,
+      "text": "嘴下流情"
+    },
+    {
+      "start_seconds": 10,
+      "end_seconds": 11,
+      "text": "舞噴"
+    },
+    {
+      "start_seconds": 11,
+      "end_seconds": 13,
+      "text": "我將所有涉及到的安裝包"
+    },
+    {
+      "start_seconds": 13,
+      "end_seconds": 14,
+      "text": "都放在這裡了"
+    },
+    {
+      "start_seconds": 14,
+      "end_seconds": 16,
+      "text": "工具包大家看這個拿就可以了"
+    },
+    {
+      "start_seconds": 16,
+      "end_seconds": 18,
+      "text": "這是拿虛擬機演示的"
+    },
+    {
+      "start_seconds": 18,
+      "end_seconds": 20,
+      "text": "錄屏的時候出現了一些問題"
+    },
+    {
+      "start_seconds": 20,
+      "end_seconds": 22,
+      "text": "我在真實主機中是一遍過的"
+    },
+    {
+      "start_seconds": 22,
+      "end_seconds": 25,
+      "text": "這是所有的工具包大家下載完解壓就可以"
+    },
+    {
+      "start_seconds": 25,
+      "end_seconds": 28,
+      "text": "然後打開這個教程資源TXT文件"
+    },
+    {
+      "start_seconds": 28,
+      "end_seconds": 30,
+      "text": "我們先放在左邊"
+    },
+    {
+      "start_seconds": 30,
+      "end_seconds": 34,
+      "text": "方便後面,我們直接複製,然後打開一個PowerShell窗口。"
+    },
+    {
+      "start_seconds": 35,
+      "end_seconds": 36,
+      "text": "這裡阿皮有點強迫症。"
+    },
+    {
+      "start_seconds": 38,
+      "end_seconds": 43,
+      "text": "打開註冊機下的Any Auto Register Main目錄,然後複製文件加錄鏡。"
+    },
+    {
+      "start_seconds": 43,
+      "end_seconds": 45,
+      "text": "回到PowerShell窗口,CD進入。"
+    },
+    {
+      "start_seconds": 46,
+      "end_seconds": 48,
+      "text": "這裡需要說一下在執行後面流程前。"
+    },
+    {
+      "start_seconds": 48,
+      "end_seconds": 52,
+      "text": "需要先將康達和購安裝,這個就很簡單了。"
+    },
+    {
+      "start_seconds": 52,
+      "end_seconds": 54,
+      "text": "搜索下載完直接安裝就行。"
+    },
+    {
+      "start_seconds": 54,
+      "end_seconds": 58,
+      "text": "接下來就是複製左側命令,然後到右側粘貼就行。"
+    },
+    {
+      "start_seconds": 58,
+      "end_seconds": 79,
+      "text": "然后慢慢等就可以了,这里我们加速下,出现这个,就是执行成功了,然后继续复制粘贴,不比较慢,操作的时候,大家可以刷会视频。"
+    },
+    {
+      "start_seconds": 79,
+      "end_seconds": 126,
+      "text": "我就直接加速过程演示了。装完成了,我们继续下面命令。这里由于Apple之前本地安装过,所以很快,大家首次安装慢慢等就行。"
+    },
+    {
+      "start_seconds": 126,
+      "end_seconds": 137,
+      "text": "然后我们运行项目,这里可以看到项目启动信息。"
+    },
+    {
+      "start_seconds": 137,
+      "end_seconds": 143,
+      "text": "我们复制这个,直接粘贴到浏览器访问就可以。"
+    },
+    {
+      "start_seconds": 143,
+      "end_seconds": 150,
+      "text": "此处就是注册页面。"
+    },
+    {
+      "start_seconds": 150,
+      "end_seconds": 155,
+      "text": "我们后续来讲,先点击左侧全局配置,然后点击插件。"
+    },
+    {
+      "start_seconds": 155,
+      "end_seconds": 158,
+      "text": "这里加在一会儿就会出现插件列表。"
+    },
+    {
+      "start_seconds": 158,
+      "end_seconds": 161,
+      "text": "我们主要使用Ci来铺AXIE API插件。"
+    },
+    {
+      "start_seconds": 161,
+      "end_seconds": 167,
+      "text": "点击打开控制台按钮,这里UP浏览器之前登录过,所以直接进来了。"
+    },
+    {
+      "start_seconds": 167,
+      "end_seconds": 169,
+      "text": "我先退出登录大家看一下。"
+    },
+    {
+      "start_seconds": 170,
+      "end_seconds": 178,
+      "text": "回到刚才的页面,点击复制登录口令,到这里粘贴进去登录就可以了。"
+    },
+    {
+      "start_seconds": 178,
+      "end_seconds": 183,
+      "text": "这个就是我们注册后管理评证的一个插件。"
+    },
+    {
+      "start_seconds": 183,
+      "end_seconds": 189,
+      "text": "这里后续会看到我们的评证,不然忘了要做啥了。"
+    },
+    {
+      "start_seconds": 189,
+      "end_seconds": 194,
+      "text": "想了一会找到了,然后我们配置邮箱服务。"
+    },
+    {
+      "start_seconds": 194,
+      "end_seconds": 197,
+      "text": "这个工具支持很多种类型的邮箱。"
+    },
+    {
+      "start_seconds": 197,
+      "end_seconds": 200,
+      "text": "但是好多免费的,基本是不好用了。"
+    },
+    {
+      "start_seconds": 200,
+      "end_seconds": 201,
+      "text": "估计被耗吐了。"
+    },
+    {
+      "start_seconds": 201,
+      "end_seconds": 204,
+      "text": "App最近用的是Lockmail这个。"
+    },
+    {
+      "start_seconds": 204,
+      "end_seconds": 207,
+      "text": "这个反正我用的还可以,大家可以自行选择。"
+    },
+    {
+      "start_seconds": 208,
+      "end_seconds": 210,
+      "text": "选择对应邮箱配置就行。"
+    },
+    {
+      "start_seconds": 210,
+      "end_seconds": 212,
+      "text": "这里我用Lockmail演示。"
+    },
+    {
+      "start_seconds": 212,
+      "end_seconds": 215,
+      "text": "这里有这个演示邮箱的地址和邀请码,"
+    },
+    {
+      "start_seconds": 215,
+      "end_seconds": 219,
+      "text": "大家如果用的话直接复制到浏览器访问就可以。"
+    },
+    {
+      "start_seconds": 219,
+      "end_seconds": 224,
+      "text": "这里UP已经登陆过了。"
+    },
+    {
+      "start_seconds": 224,
+      "end_seconds": 226,
+      "text": "我们直接去找key就行。"
+    },
+    {
+      "start_seconds": 227,
+      "end_seconds": 229,
+      "text": "点击API文档菜单。"
+    },
+    {
+      "start_seconds": 230,
+      "end_seconds": 232,
+      "text": "找到右侧这个API key,"
+    },
+    {
+      "start_seconds": 232,
+      "end_seconds": 233,
+      "text": "然后点击复制,"
+    },
+    {
+      "start_seconds": 233,
+      "end_seconds": 238,
+      "text": "然后回到刚才页面粘贴进去就可以。"
+    },
+    {
+      "start_seconds": 238,
+      "end_seconds": 243,
+      "text": "最後別忘了點擊下面的保存配置按鈕。"
+    },
+    {
+      "start_seconds": 243,
+      "end_seconds": 247,
+      "text": "這幾秒鐘,我不會打移動的馬賽克。大家別介意。"
+    },
+    {
+      "start_seconds": 247,
+      "end_seconds": 250,
+      "text": "這裡說一下代理和郵箱很重要。"
+    },
+    {
+      "start_seconds": 250,
+      "end_seconds": 253,
+      "text": "幾乎這兩個就是決定成功率的關鍵了。"
+    },
+    {
+      "start_seconds": 253,
+      "end_seconds": 255,
+      "text": "接下面就是配置代理。"
+    },
+    {
+      "start_seconds": 255,
+      "end_seconds": 258,
+      "text": "將你們自己的代理粘貼進來就可以。"
+    },
+    {
+      "start_seconds": 258,
+      "end_seconds": 260,
+      "text": "這個好像是不可以細量。"
+    },
+    {
+      "start_seconds": 261,
+      "end_seconds": 264,
+      "text": "這裡我就模糊處理了。大家找個能用的就行。"
+    },
+    {
+      "start_seconds": 264,
+      "end_seconds": 284,
+      "text": "配置完成後,我們就可以正式註冊了。"
+    },
+    {
+      "start_seconds": 284,
+      "end_seconds": 294,
+      "text": "這裡輸入你想註冊的數量和併發數,填寫完成後點擊開始註冊就行。"
+    },
+    {
+      "start_seconds": 295,
+      "end_seconds": 298,
+      "text": "這裡可以看到它這個執行的過程日誌。"
+    },
+    {
+      "start_seconds": 298,
+      "end_seconds": 319,
+      "text": "我們讓它先跑著,我們去安裝下一個項目。"
+    },
+    {
+      "start_seconds": 319,
+      "end_seconds": 323,
+      "text": "下一個,是這個管理面板,也就是某一種的那種。"
+    },
+    {
+      "start_seconds": 323,
+      "end_seconds": 336,
+      "text": "依舊是先找到我們的目錄,打開複製路徑,然後加一個PowerShell窗口。"
+    },
+    {
+      "start_seconds": 336,
+      "end_seconds": 345,
+      "text": "CD進入剛才複製的目錄中,然後複製左側的命令沾貼執行。"
+    },
+    {
+      "start_seconds": 346,
+      "end_seconds": 350,
+      "text": "这里首次运行的话,大家可能会等待一会。"
+    },
+    {
+      "start_seconds": 350,
+      "end_seconds": 358,
+      "text": "我这个因为以前安装过,所以很快。出现这个就是执行完成了。"
+    },
+    {
+      "start_seconds": 358,
+      "end_seconds": 364,
+      "text": "然后就是执行下面的命令启动项目。"
+    },
+    {
+      "start_seconds": 364,
+      "end_seconds": 368,
+      "text": "这个虚拟机有点问题,这里启动得很慢。"
+    },
+    {
+      "start_seconds": 368,
+      "end_seconds": 371,
+      "text": "不耽误大家时间,我直接加速过程。"
+    },
+    {
+      "start_seconds": 371,
+      "end_seconds": 379,
+      "text": "也是运行了半分钟左右。出现这个就是启动成功了。"
+    },
+    {
+      "start_seconds": 379,
+      "end_seconds": 381,
+      "text": "大家复制網址訪問即可以"
+    },
+    {
+      "start_seconds": 381,
+      "end_seconds": 389,
+      "text": "首次運行系統會進行初始化"
+    },
+    {
+      "start_seconds": 389,
+      "end_seconds": 391,
+      "text": "以後就不會了"
+    },
+    {
+      "start_seconds": 391,
+      "end_seconds": 393,
+      "text": "我們點擊下一步"
+    },
+    {
+      "start_seconds": 393,
+      "end_seconds": 406,
+      "text": "然後設置下系統登錄的帳號和密碼"
+    },
+    {
+      "start_seconds": 406,
+      "end_seconds": 408,
+      "text": "然後點擊下一步"
+    },
+    {
+      "start_seconds": 408,
+      "end_seconds": 410,
+      "text": "這裡有三種模式"
+    },
+    {
+      "start_seconds": 410,
+      "end_seconds": 411,
+      "text": "對外運營模式"
+    },
+    {
+      "start_seconds": 411,
+      "end_seconds": 412,
+      "text": "自用模式"
+    },
+    {
+      "start_seconds": 412,
+      "end_seconds": 413,
+      "text": "和演示站點模式"
+    },
+    {
+      "start_seconds": 413,
+      "end_seconds": 415,
+      "text": "我們自己用的話"
+    },
+    {
+      "start_seconds": 415,
+      "end_seconds": 417,
+      "text": "選擇中間這個自用模式就可以"
+    },
+    {
+      "start_seconds": 417,
+      "end_seconds": 418,
+      "text": "選擇完成後"
+    },
+    {
+      "start_seconds": 418,
+      "end_seconds": 420,
+      "text": "點擊初始化系統就行"
+    },
+    {
+      "start_seconds": 420,
+      "end_seconds": 425,
+      "text": "進來可以看到這裡有個網址"
+    },
+    {
+      "start_seconds": 425,
+      "end_seconds": 427,
+      "text": "这个就是接口地址。"
+    },
+    {
+      "start_seconds": 427,
+      "end_seconds": 430,
+      "text": "我们先用刚才配置的帐号密码登录系统。"
+    },
+    {
+      "start_seconds": 430,
+      "end_seconds": 432,
+      "text": "这里的信息都是默认的。"
+    },
+    {
+      "start_seconds": 432,
+      "end_seconds": 434,
+      "text": "我们自己用无需关注。"
+    },
+    {
+      "start_seconds": 434,
+      "end_seconds": 438,
+      "text": "先点击令牌管理,创建一个使用令牌。"
+    },
+    {
+      "start_seconds": 438,
+      "end_seconds": 441,
+      "text": "信息先随便填写即可。"
+    },
+    {
+      "start_seconds": 441,
+      "end_seconds": 443,
+      "text": "填写完点击提交,"
+    },
+    {
+      "start_seconds": 443,
+      "end_seconds": 446,
+      "text": "这里就出现我们刚才出创建的令牌。"
+    },
+    {
+      "start_seconds": 446,
+      "end_seconds": 453,
+      "text": "然后这个渠道管理,就是等那边注册后需要添加的。"
+    },
+    {
+      "start_seconds": 453,
+      "end_seconds": 458,
+      "text": "我们去看一下那边的注册进度咋样了。"
+    },
+    {
+      "start_seconds": 458,
+      "end_seconds": 464,
+      "text": "本来我想等一会儿,然后给大家演示,但是等了好久,还没有注册成功。"
+    },
+    {
+      "start_seconds": 464,
+      "end_seconds": 469,
+      "text": "后来我感觉应该是代理出问题了,因为App没舍得买好的。"
+    },
+    {
+      "start_seconds": 469,
+      "end_seconds": 474,
+      "text": "这里就可以看出来代理和邮箱很重要,然后我又换了一批代理。"
+    },
+    {
+      "start_seconds": 474,
+      "end_seconds": 490,
+      "text": "我们重新注册试下,然后App继续苦逼地等待。"
+    },
+    {
+      "start_seconds": 490,
+      "end_seconds": 496,
+      "text": "注册第一个又失败了,我以为要翻车了,行死今天白路了。"
+    },
+    {
+      "start_seconds": 497,
+      "end_seconds": 500,
+      "text": "终于第二个成功了,也算是没白费。"
+    },
+    {
+      "start_seconds": 500,
+      "end_seconds": 510,
+      "text": "那就让它先注册着,我们复制网址,新打开一个页面演示。"
+    },
+    {
+      "start_seconds": 510,
+      "end_seconds": 513,
+      "text": "这里可以看到我们刚才注册成功的一个。"
+    },
+    {
+      "start_seconds": 513,
+      "end_seconds": 516,
+      "text": "这里当时不知道为啥手签又点过去了。"
+    },
+    {
+      "start_seconds": 516,
+      "end_seconds": 521,
+      "text": "我们点击后面的探测本地状态按钮。"
+    },
+    {
+      "start_seconds": 521,
+      "end_seconds": 524,
+      "text": "然后等待一会儿,就会弹出结果。"
+    },
+    {
+      "start_seconds": 524,
+      "end_seconds": 527,
+      "text": "可以看到我们这个账号是没问题的。"
+    },
+    {
+      "start_seconds": 527,
+      "end_seconds": 531,
+      "text": "然后我们点击补传远端,未发现按钮。"
+    },
+    {
+      "start_seconds": 531,
+      "end_seconds": 533,
+      "text": "等待遺慧"
+    },
+    {
+      "start_seconds": 534,
+      "end_seconds": 535,
+      "text": "这里显示CPA失败"
+    },
+    {
+      "start_seconds": 536,
+      "end_seconds": 537,
+      "text": "结论是没有事"
+    },
+    {
+      "start_seconds": 537,
+      "end_seconds": 539,
+      "text": "可能是网络波动的问题"
+    },
+    {
+      "start_seconds": 539,
+      "end_seconds": 540,
+      "text": "大家再次点击即可"
+    },
+    {
+      "start_seconds": 541,
+      "end_seconds": 542,
+      "text": "但是我一开始不知道"
+    },
+    {
+      "start_seconds": 543,
+      "end_seconds": 544,
+      "text": "就找了一圈其实没啥用"
+    },
+    {
+      "start_seconds": 545,
+      "end_seconds": 546,
+      "text": "找了一圈问题"
+    },
+    {
+      "start_seconds": 546,
+      "end_seconds": 547,
+      "text": "其实啥也没干"
+    },
+    {
+      "start_seconds": 547,
+      "end_seconds": 549,
+      "text": "给大家快进下我的梦圈操作"
+    },
+    {
+      "start_seconds": 549,
+      "end_seconds": 555,
+      "text": "最后还是回来点击这个"
+    },
+    {
+      "start_seconds": 555,
+      "end_seconds": 556,
+      "text": "就同步成功了"
+    },
+    {
+      "start_seconds": 557,
+      "end_seconds": 558,
+      "text": "我感觉就是网络问题"
+    },
+    {
+      "start_seconds": 559,
+      "end_seconds": 560,
+      "text": "害我耽误了10分钟"
+    },
+    {
+      "start_seconds": 563,
+      "end_seconds": 566,
+      "text": "然后我们打开这个CPAMC平台"
+    },
+    {
+      "start_seconds": 566,
+      "end_seconds": 569,
+      "text": "点击刷新"
+    },
+    {
+      "start_seconds": 569,
+      "end_seconds": 572,
+      "text": "就可以看到,同步过来的模型列表了。"
+    },
+    {
+      "start_seconds": 572,
+      "end_seconds": 575,
+      "text": "点击认证文件菜单。"
+    },
+    {
+      "start_seconds": 575,
+      "end_seconds": 579,
+      "text": "这里可以看到,我们刚才注册的账号在这里。"
+    },
+    {
+      "start_seconds": 579,
+      "end_seconds": 588,
+      "text": "点击刷新额度看一下账号情况。"
+    },
+    {
+      "start_seconds": 588,
+      "end_seconds": 590,
+      "text": "能刷新出来就是成功了。"
+    },
+    {
+      "start_seconds": 590,
+      "end_seconds": 598,
+      "text": "然后我们到管理平台中去添加。"
+    },
+    {
+      "start_seconds": 598,
+      "end_seconds": 599,
+      "text": "这里暂停一下。"
+    },
+    {
+      "start_seconds": 599,
+      "end_seconds": 603,
+      "text": "之前在第一次等待注册的期间,时间太长了。"
+    },
+    {
+      "start_seconds": 603,
+      "end_seconds": 605,
+      "text": "我就来先点击创建渠道了。"
+    },
+    {
+      "start_seconds": 605,
+      "end_seconds": 609,
+      "text": "其实就是名称、API地址、密钥这三项。"
+    },
+    {
+      "start_seconds": 609,
+      "end_seconds": 624,
+      "text": "名称随便起一个,我就演示写了KPAM,密钥和API地址一会儿我跟你们说在哪获得,打开这个KPAM平台,点击仪表盘菜单,点击这个管理密钥,想下滑找到API密钥管理列表。"
+    },
+    {
+      "start_seconds": 624,
+      "end_seconds": 636,
+      "text": "可以看到默认是有三个密钥在这里,随便找一个密钥点击编辑,点击生成按钮,更新即可,此处需要注意,最后要点击下面的这个对号才可以。"
+    },
+    {
+      "start_seconds": 636,
+      "end_seconds": 638,
+      "text": "然后我们点击复制刚才的密钥"
+    },
+    {
+      "start_seconds": 638,
+      "end_seconds": 640,
+      "text": "此处暂停下"
+    },
+    {
+      "start_seconds": 640,
+      "end_seconds": 641,
+      "text": "密钥我们有了"
+    },
+    {
+      "start_seconds": 641,
+      "end_seconds": 644,
+      "text": "然后APID纸就是上面的这个复制就行"
+    },
+    {
+      "start_seconds": 645,
+      "end_seconds": 649,
+      "text": "然后回到这个页面将密钥和APID纸填入就可以"
+    },
+    {
+      "start_seconds": 649,
+      "end_seconds": 652,
+      "text": "然后点击获取模型列表按钮"
+    },
+    {
+      "start_seconds": 652,
+      "end_seconds": 653,
+      "text": "这里提示出问题了"
+    },
+    {
+      "start_seconds": 653,
+      "end_seconds": 655,
+      "text": "我们检查下"
+    },
+    {
+      "start_seconds": 655,
+      "end_seconds": 657,
+      "text": "检查了一圈发现是APID纸这里"
+    },
+    {
+      "start_seconds": 657,
+      "end_seconds": 658,
+      "text": "多了一个斜线"
+    },
+    {
+      "start_seconds": 658,
+      "end_seconds": 660,
+      "text": "给它去掉了就可以了"
+    },
+    {
+      "start_seconds": 660,
+      "end_seconds": 662,
+      "text": "再次点击就没问题了"
+    },
+    {
+      "start_seconds": 662,
+      "end_seconds": 663,
+      "text": "一定要注意此处"
+    },
+    {
+      "start_seconds": 663,
+      "end_seconds": 664,
+      "text": "复制地址后"
+    },
+    {
+      "start_seconds": 664,
+      "end_seconds": 666,
+      "text": "不要带鞋线"
+    },
+    {
+      "start_seconds": 666,
+      "end_seconds": 669,
+      "text": "接着我们全选模型点击确定就可以"
+    },
+    {
+      "start_seconds": 669,
+      "end_seconds": 675,
+      "text": "背到列表可以看到已经创建了一个渠道"
+    },
+    {
+      "start_seconds": 675,
+      "end_seconds": 684,
+      "text": "然后点击左侧的模型管理菜单"
+    },
+    {
+      "start_seconds": 684,
+      "end_seconds": 686,
+      "text": "点击上面的同步按钮"
+    },
+    {
+      "start_seconds": 686,
+      "end_seconds": 689,
+      "text": "选择从官方同步模型"
+    },
+    {
+      "start_seconds": 689,
+      "end_seconds": 691,
+      "text": "点击开始同步"
+    },
+    {
+      "start_seconds": 691,
+      "end_seconds": 697,
+      "text": "完成后这里就出现可用的模型列表了"
+    },
+    {
+      "start_seconds": 697,
+      "end_seconds": 699,
+      "text": "上面点击模型广场"
+    },
+    {
+      "start_seconds": 699,
+      "end_seconds": 700,
+      "text": "也可以看到"
+    },
+    {
+      "start_seconds": 700,
+      "end_seconds": 707,
+      "text": "我们回到控制台"
+    },
+    {
+      "start_seconds": 707,
+      "end_seconds": 708,
+      "text": "点击令牌管理菜单"
+    },
+    {
+      "start_seconds": 708,
+      "end_seconds": 721,
+      "text": "复制最开始前面创建的另排密钥,然后点击首页拿到API接口地址。"
+    },
+    {
+      "start_seconds": 723,
+      "end_seconds": 725,
+      "text": "我用的是OpenCode的掩饰使用。"
+    },
+    {
+      "start_seconds": 725,
+      "end_seconds": 732,
+      "text": "先打开编辑器,可以看到现在只能使用免费的几个模型。"
+    },
+    {
+      "start_seconds": 734,
+      "end_seconds": 738,
+      "text": "然后我们点击左侧设置按钮,找到点击提供商菜单。"
+    },
+    {
+      "start_seconds": 739,
+      "end_seconds": 740,
+      "text": "下滑找到自定义提供商。"
+    },
+    {
+      "start_seconds": 741,
+      "end_seconds": 744,
+      "text": "这里随便填写,我就用开判模来掩饰。"
+    },
+    {
+      "start_seconds": 744,
+      "end_seconds": 753,
+      "text": "按API密钥这添加前面复制的另排密钥,"
+    },
+    {
+      "start_seconds": 753,
+      "end_seconds": 762,
+      "text": "然后会回到页面复制API地址,回到编辑器中粘贴进去。"
+    },
+    {
+      "start_seconds": 763,
+      "end_seconds": 770,
+      "text": "此处需要注意要加V1,下面填写这个模型信息。"
+    },
+    {
+      "start_seconds": 770,
+      "end_seconds": 784,
+      "text": "回到管理平台中,我们用这个模型来演示,复制这个模型名称。"
+    },
+    {
+      "start_seconds": 784,
+      "end_seconds": 788,
+      "text": "回到编辑器中,直接粘贴记可以。"
+    },
+    {
+      "start_seconds": 788,
+      "end_seconds": 791,
+      "text": "后面这个是你想展示的名称随便写。"
+    },
+    {
+      "start_seconds": 791,
+      "end_seconds": 795,
+      "text": "这里我就先添加两个给大家演示流程。"
+    },
+    {
+      "start_seconds": 795,
+      "end_seconds": 797,
+      "text": "後續大家可以自己添加多個"
+    },
+    {
+      "start_seconds": 797,
+      "end_seconds": 817,
+      "text": "增加完成點擊保存就可以"
+    },
+    {
+      "start_seconds": 817,
+      "end_seconds": 829,
+      "text": "我們再次點擊模型查看"
+    },
+    {
+      "start_seconds": 829,
+      "end_seconds": 833,
+      "text": "這裡可以看到我們剛才加的兩個模型已經出來了"
+    },
+    {
+      "start_seconds": 833,
+      "end_seconds": 837,
+      "text": "我們選擇一個嘗試下"
+    },
+    {
+      "start_seconds": 837,
+      "end_seconds": 846,
+      "text": "理出來結果了"
+    },
+    {
+      "start_seconds": 846,
+      "end_seconds": 848,
+      "text": "證明已經成功了"
+    },
+    {
+      "start_seconds": 848,
+      "end_seconds": 852,
+      "text": "我們去看一下剛才的調用紀錄"
+    },
+    {
+      "start_seconds": 852,
+      "end_seconds": 858,
+      "text": "這裡就可以看到我們剛才的請求對話"
+    },
+    {
+      "start_seconds": 858,
+      "end_seconds": 859,
+      "text": "好了"
+    },
+    {
+      "start_seconds": 859,
+      "end_seconds": 861,
+      "text": "整個流程基本就是這樣"
+    },
+    {
+      "start_seconds": 861,
+      "end_seconds": 863,
+      "text": "後續我們可以不用每個模型都配置"
+    },
+    {
+      "start_seconds": 863,
+      "end_seconds": 866,
+      "text": "UP這有一個配置好的文件替換進去"
+    },
+    {
+      "start_seconds": 866,
+      "end_seconds": 874,
+      "text": "然后打开文件,将对应的令牌密要换成自己的就可以,保存后将编辑器关闭,重新打开声效。"
+    },
+    {
+      "start_seconds": 874,
+      "end_seconds": 883,
+      "text": "微搜索小哥藏保库即可。"
+    }
+  ]
+}

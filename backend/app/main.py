@@ -1,6 +1,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
+from app.routers.summary_stream import router as summary_router
 from app.routers.video import router as video_router
 
 
@@ -26,3 +27,4 @@ def health_check():
 
 
 app.include_router(video_router)
+app.include_router(summary_router)

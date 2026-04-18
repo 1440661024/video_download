@@ -1,0 +1,715 @@
+{
+  "video_title": "做了个新项目，我要出海了！",
+  "source_url": "https://www.bilibili.com/video/BV1mAAmzqEfP",
+  "summary_mode": "overview",
+  "overview": "本视频介绍了程序员鱼皮开发的Datab文档翻译平台项目，这是一个旨在帮助开发者将开源项目文档自动翻译成多语言的AI驱动工具。项目核心是通过AI技术简化文档国际化流程，支持从GitHub仓库导入、选择语言、AI自动翻译到自动创建合并请求的全流程。开发过程全程直播，99%代码由AI生成，采用现代AI应用开发流程，不到一天即完成开发并上线，代码已开源并附带完整教程。",
+  "key_points": [
+    "Datab文档翻译平台旨在解决开源项目文档仅中文导致海外用户无法访问的问题，通过AI自动翻译扩大国际影响力。",
+    "核心功能包括导入GitHub仓库、选择翻译语言、可视化文档选择、AI自动翻译、自动创建合并请求和智能插入多语言切换链接。",
+    "技术特点支持自动增量翻译、可配置主流大模型API（如GPT、Claude、Gemini、DeepSeek），无需人工翻译或复杂配置。",
+    "开发方式采用全程直播，99%代码由AI生成，使用Cursor等AI编程工具，遵循现代AI应用开发流程，提升开发效率。",
+    "项目成果包括不到一天完成开发并上线，代码已开源，附带完整教程和实战技术文档，示例展示了从需求调研到部署的全过程。",
+    "扩展功能开发时通过新开AI对话窗口避免上下文过多，集成GitHub App安全授权、Webhook自动触发等实战技术提升就业竞争力。"
+  ],
+  "chapter_summaries": [
+    {
+      "title": "项目介绍与背景",
+      "start_seconds": 0,
+      "start_human": "00:00",
+      "summary": "介绍Datab文档翻译平台项目，旨在帮助开发者将开源项目文档翻译成多语言以扩大国际影响力，解决因文档仅中文导致海外用户无法理解的问题。"
+    },
+    {
+      "title": "核心功能与技术特点",
+      "start_seconds": 60,
+      "start_human": "01:00",
+      "summary": "详细说明平台的核心功能，包括导入GitHub仓库、选择翻译语言、AI自动翻译、自动创建合并请求等，技术特点支持自动增量翻译和可配置大模型API。"
+    },
+    {
+      "title": "AI开发流程与成果",
+      "start_seconds": 120,
+      "start_human": "02:00",
+      "summary": "描述开发过程全程直播，99%代码由AI生成，使用Cursor等工具，遵循现代AI应用开发流程，不到一天完成开发并上线，代码已开源。"
+    },
+    {
+      "title": "示例与实战技术",
+      "start_seconds": 180,
+      "start_human": "03:00",
+      "summary": "通过示例展示需求调研、技术方案设计、并行开发等流程，扩展功能开发时优化AI使用，集成GitHub App、Webhook等实战技术提升竞争力。"
+    }
+  ],
+  "takeaways": [
+    "Datab平台通过AI自动化解决了开源项目文档国际化的痛点，显著降低翻译成本和时间。",
+    "AI驱动开发能极大提升效率，本项目99%代码由AI生成，展示了现代编程工具的强大能力。",
+    "项目集成实战技术如GitHub App和Webhook，为开发者提供了宝贵的就业技能参考。",
+    "开源和教程分享促进了技术社区的学习和协作，体现了开源精神的价值。"
+  ],
+  "transcript_segments": [
+    {
+      "start_seconds": 0,
+      "start_human": "0:00",
+      "end_seconds": 3,
+      "end_human": "0:03",
+      "text": "我做了这帮开发者出海的新项目"
+    },
+    {
+      "start_seconds": 3,
+      "start_human": "0:03",
+      "end_seconds": 5,
+      "end_human": "0:05",
+      "text": "Datab文档翻译平台"
+    },
+    {
+      "start_seconds": 5,
+      "start_human": "0:05",
+      "end_seconds": 6,
+      "end_human": "0:06",
+      "text": "代码全部开源"
+    },
+    {
+      "start_seconds": 6,
+      "start_human": "0:06",
+      "end_seconds": 9,
+      "end_human": "0:09",
+      "text": "比如我之前开源了一套AI编程零基础教程"
+    },
+    {
+      "start_seconds": 9,
+      "start_human": "0:09",
+      "end_seconds": 11,
+      "end_human": "0:11",
+      "text": "文档全是中文的"
+    },
+    {
+      "start_seconds": 11,
+      "start_human": "0:11",
+      "end_seconds": 12,
+      "end_human": "0:12",
+      "text": "老外真本看不懂"
+    },
+    {
+      "start_seconds": 12,
+      "start_human": "0:12",
+      "end_seconds": 14,
+      "end_human": "0:14",
+      "text": "错失了很多流量"
+    },
+    {
+      "start_seconds": 14,
+      "start_human": "0:14",
+      "end_seconds": 15,
+      "end_human": "0:15",
+      "text": "有了这个项目后"
+    },
+    {
+      "start_seconds": 15,
+      "start_human": "0:15",
+      "end_seconds": 18,
+      "end_human": "0:18",
+      "text": "我只需要输入任意以这Datab仓库地址"
+    },
+    {
+      "start_seconds": 18,
+      "start_human": "0:18",
+      "end_seconds": 19,
+      "end_human": "0:19",
+      "text": "把仓库导入进来"
+    },
+    {
+      "start_seconds": 19,
+      "start_human": "0:19",
+      "end_seconds": 20,
+      "end_human": "0:20",
+      "text": "然后进入仓库"
+    },
+    {
+      "start_seconds": 20,
+      "start_human": "0:20",
+      "end_seconds": 23,
+      "end_human": "0:23",
+      "text": "选择文档翻译的原始语言"
+    },
+    {
+      "start_seconds": 23,
+      "start_human": "0:23",
+      "end_seconds": 25,
+      "end_human": "0:25",
+      "text": "以及要翻译成哪些目标语言"
+    },
+    {
+      "start_seconds": 25,
+      "start_human": "0:25",
+      "end_seconds": 27,
+      "end_human": "0:27",
+      "text": "还可以通过可视化的文件数"
+    },
+    {
+      "start_seconds": 27,
+      "start_human": "0:27",
+      "end_seconds": 29,
+      "end_human": "0:29",
+      "text": "自有选择要翻译哪些文档"
+    },
+    {
+      "start_seconds": 29,
+      "start_human": "0:29",
+      "end_seconds": 31,
+      "end_human": "0:31",
+      "text": "之后点一下开始翻译"
+    },
+    {
+      "start_seconds": 31,
+      "start_human": "0:31",
+      "end_seconds": 35,
+      "end_human": "0:35",
+      "text": "程序就会调用AI帮你自动翻译所有的文档"
+    },
+    {
+      "start_seconds": 35,
+      "start_human": "0:35",
+      "end_seconds": 38,
+      "end_human": "0:38",
+      "text": "翻译完成后还会自动创建代码合并请求"
+    },
+    {
+      "start_seconds": 38,
+      "start_human": "0:38",
+      "end_seconds": 40,
+      "end_human": "0:40",
+      "text": "你只需要人工审核一下"
+    },
+    {
+      "start_seconds": 40,
+      "start_human": "0:40",
+      "end_seconds": 42,
+      "end_human": "0:42",
+      "text": "合并到自己的仓库就可以了"
+    },
+    {
+      "start_seconds": 42,
+      "start_human": "0:42",
+      "end_seconds": 45,
+      "end_human": "0:45",
+      "text": "而且它还会在你的Redmi项目介绍文档中"
+    },
+    {
+      "start_seconds": 45,
+      "start_human": "0:45",
+      "end_seconds": 47,
+      "end_human": "0:47",
+      "text": "智能插入多语言切换链接"
+    },
+    {
+      "start_seconds": 47,
+      "start_human": "0:47",
+      "end_seconds": 48,
+      "end_human": "0:48",
+      "text": "一步到位"
+    },
+    {
+      "start_seconds": 48,
+      "start_human": "0:48",
+      "end_seconds": 50,
+      "end_human": "0:50",
+      "text": "不需要人工翻译"
+    },
+    {
+      "start_seconds": 50,
+      "start_human": "0:50",
+      "end_seconds": 51,
+      "end_human": "0:51",
+      "text": "不需要配环境"
+    },
+    {
+      "start_seconds": 51,
+      "start_human": "0:51",
+      "end_seconds": 53,
+      "end_human": "0:53",
+      "text": "不需要折腾什么Gatehub AdSense工作流"
+    },
+    {
+      "start_seconds": 53,
+      "start_human": "0:53",
+      "end_seconds": 55,
+      "end_human": "0:55",
+      "text": "直接在平台上操作"
+    },
+    {
+      "start_seconds": 55,
+      "start_human": "0:55",
+      "end_seconds": 57,
+      "end_human": "0:57",
+      "text": "轻松帮你的开源项目出海"
+    },
+    {
+      "start_seconds": 57,
+      "start_human": "0:57",
+      "end_seconds": 60,
+      "end_human": "1:00",
+      "text": "此外 项目还支持自动增量翻译"
+    },
+    {
+      "start_seconds": 60,
+      "start_human": "1:00",
+      "end_seconds": 62,
+      "end_human": "1:02",
+      "text": "只要开启自动翻译开端"
+    },
+    {
+      "start_seconds": 62,
+      "start_human": "1:02",
+      "end_seconds": 64,
+      "end_human": "1:04",
+      "text": "之后修改仓库内的文档时"
+    },
+    {
+      "start_seconds": 64,
+      "start_human": "1:04",
+      "end_seconds": 66,
+      "end_human": "1:06",
+      "text": "程序会自动帮你检测辩征"
+    },
+    {
+      "start_seconds": 66,
+      "start_human": "1:06",
+      "end_seconds": 68,
+      "end_human": "1:08",
+      "text": "只翻译修改了的文件"
+    },
+    {
+      "start_seconds": 68,
+      "start_human": "1:08",
+      "end_seconds": 70,
+      "end_human": "1:10",
+      "text": "不用重新翻译整个仓库"
+    },
+    {
+      "start_seconds": 70,
+      "start_human": "1:10",
+      "end_seconds": 71,
+      "end_human": "1:11",
+      "text": "又快又省"
+    },
+    {
+      "start_seconds": 71,
+      "start_human": "1:11",
+      "end_seconds": 74,
+      "end_human": "1:14",
+      "text": "你还可以配置自己的大模型API-K"
+    },
+    {
+      "start_seconds": 74,
+      "start_human": "1:14",
+      "end_seconds": 76,
+      "end_human": "1:16",
+      "text": "GPT、Cloud、Germany、Deepset"
+    },
+    {
+      "start_seconds": 76,
+      "start_human": "1:16",
+      "end_seconds": 77,
+      "end_human": "1:17",
+      "text": "这些主流大模型"
+    },
+    {
+      "start_seconds": 77,
+      "start_human": "1:17",
+      "end_seconds": 78,
+      "end_human": "1:18",
+      "text": "想用哪着用哪着"
+    },
+    {
+      "start_seconds": 78,
+      "start_human": "1:18",
+      "end_seconds": 80,
+      "end_human": "1:20",
+      "text": "下面重点来了"
+    },
+    {
+      "start_seconds": 80,
+      "start_human": "1:20",
+      "end_seconds": 83,
+      "end_human": "1:23",
+      "text": "这个项目我是全程直播开发的"
+    },
+    {
+      "start_seconds": 83,
+      "start_human": "1:23",
+      "end_seconds": 86,
+      "end_human": "1:26",
+      "text": "99%以上的代码都是AI写的"
+    },
+    {
+      "start_seconds": 86,
+      "start_human": "1:26",
+      "end_seconds": 89,
+      "end_human": "1:29",
+      "text": "我主要用的是Cursor這款AI編程工具"
+    },
+    {
+      "start_seconds": 89,
+      "start_human": "1:29",
+      "end_seconds": 91,
+      "end_human": "1:31",
+      "text": "搭配了FairTrial MCP聯網搜索"
+    },
+    {
+      "start_seconds": 91,
+      "start_human": "1:31",
+      "end_seconds": 95,
+      "end_human": "1:35",
+      "text": "Countex 7獲取最新技術文檔這兩者MCP的擴展"
+    },
+    {
+      "start_seconds": 95,
+      "start_human": "1:35",
+      "end_seconds": 97,
+      "end_human": "1:37",
+      "text": "前段頁面還用了UIUX ProMatch"
+    },
+    {
+      "start_seconds": 97,
+      "start_human": "1:37",
+      "end_seconds": 101,
+      "end_human": "1:41",
+      "text": "這個Agent Studios來生成正經美的UI"
+    },
+    {
+      "start_seconds": 101,
+      "start_human": "1:41",
+      "end_seconds": 104,
+      "end_human": "1:44",
+      "text": "遵循現在最主流的AI應用開發流程"
+    },
+    {
+      "start_seconds": 104,
+      "start_human": "1:44",
+      "end_seconds": 107,
+      "end_human": "1:47",
+      "text": "第一步 給AI寫一段需求調研的提示詞"
+    },
+    {
+      "start_seconds": 107,
+      "start_human": "1:47",
+      "end_seconds": 110,
+      "end_human": "1:50",
+      "text": "讓它聯網搜索競品分析差異化機會"
+    },
+    {
+      "start_seconds": 110,
+      "start_human": "1:50",
+      "end_seconds": 112,
+      "end_human": "1:52",
+      "text": "最後生成需求規則文檔"
+    },
+    {
+      "start_seconds": 112,
+      "start_human": "1:52",
+      "end_seconds": 115,
+      "end_human": "1:55",
+      "text": "第二步 讓AI設計技術方案"
+    },
+    {
+      "start_seconds": 115,
+      "start_human": "1:55",
+      "end_seconds": 118,
+      "end_human": "1:58",
+      "text": "确认用NATS的JS全站加TypeScript"
+    },
+    {
+      "start_seconds": 118,
+      "start_human": "1:58",
+      "end_seconds": 120,
+      "end_human": "2:00",
+      "text": "数据库用买色头加Prisma"
+    },
+    {
+      "start_seconds": 120,
+      "start_human": "2:00",
+      "end_seconds": 122,
+      "end_human": "2:02",
+      "text": "AI接入走OpenRouter"
+    },
+    {
+      "start_seconds": 122,
+      "start_human": "2:02",
+      "end_seconds": 123,
+      "end_human": "2:03",
+      "text": "第三步最关键"
+    },
+    {
+      "start_seconds": 123,
+      "start_human": "2:03",
+      "end_seconds": 125,
+      "end_human": "2:05",
+      "text": "我拆了两个AI窗口"
+    },
+    {
+      "start_seconds": 125,
+      "start_human": "2:05",
+      "end_seconds": 127,
+      "end_human": "2:07",
+      "text": "一着写后端 一着写前端"
+    },
+    {
+      "start_seconds": 127,
+      "start_human": "2:07",
+      "end_seconds": 129,
+      "end_human": "2:09",
+      "text": "后端先出接口文档给前端"
+    },
+    {
+      "start_seconds": 129,
+      "start_human": "2:09",
+      "end_seconds": 131,
+      "end_human": "2:11",
+      "text": "两边并行开发"
+    },
+    {
+      "start_seconds": 131,
+      "start_human": "2:11",
+      "end_seconds": 132,
+      "end_human": "2:12",
+      "text": "写完了再拆一着窗口"
+    },
+    {
+      "start_seconds": 132,
+      "start_human": "2:12",
+      "end_seconds": 134,
+      "end_human": "2:14",
+      "text": "专门做测试验收和修罢着"
+    },
+    {
+      "start_seconds": 134,
+      "start_human": "2:14",
+      "end_seconds": 136,
+      "end_human": "2:16",
+      "text": "跑通核心业务流程后"
+    },
+    {
+      "start_seconds": 136,
+      "start_human": "2:16",
+      "end_seconds": 138,
+      "end_human": "2:18",
+      "text": "就开始做这种扩展功能"
+    },
+    {
+      "start_seconds": 138,
+      "start_human": "2:18",
+      "end_seconds": 141,
+      "end_human": "2:21",
+      "text": "建议每做完一阵阶段都用Gate提交代码"
+    },
+    {
+      "start_seconds": 141,
+      "start_human": "2:21",
+      "end_seconds": 144,
+      "end_human": "2:24",
+      "text": "防止AI后面乱改把项目找公"
+    },
+    {
+      "start_seconds": 144,
+      "start_human": "2:24",
+      "end_seconds": 147,
+      "end_human": "2:27",
+      "text": "为了防止上下文过多导致AI断片和浪费totence"
+    },
+    {
+      "start_seconds": 147,
+      "start_human": "2:27",
+      "end_seconds": 149,
+      "end_human": "2:29",
+      "text": "做扩展功能的时候"
+    },
+    {
+      "start_seconds": 149,
+      "start_human": "2:29",
+      "end_seconds": 151,
+      "end_human": "2:31",
+      "text": "要按虚打开新的AI对话窗筹"
+    },
+    {
+      "start_seconds": 151,
+      "start_human": "2:31",
+      "end_seconds": 154,
+      "end_human": "2:34",
+      "text": "把需求文档、方案文档丢给AI"
+    },
+    {
+      "start_seconds": 154,
+      "start_human": "2:34",
+      "end_seconds": 156,
+      "end_human": "2:36",
+      "text": "再让它分析一下已有的项目圆满"
+    },
+    {
+      "start_seconds": 156,
+      "start_human": "2:36",
+      "end_seconds": 159,
+      "end_human": "2:39",
+      "text": "AI就能快速找回记忆接着战魂"
+    },
+    {
+      "start_seconds": 159,
+      "start_human": "2:39",
+      "end_seconds": 162,
+      "end_human": "2:42",
+      "text": "最后通过Wassail一键部署上线"
+    },
+    {
+      "start_seconds": 162,
+      "start_human": "2:42",
+      "end_seconds": 164,
+      "end_human": "2:44",
+      "text": "整个项目累积不到一天就做完"
+    },
+    {
+      "start_seconds": 164,
+      "start_human": "2:44",
+      "end_seconds": 166,
+      "end_human": "2:46",
+      "text": "并且上线让大家都能访问了"
+    },
+    {
+      "start_seconds": 168,
+      "start_human": "2:48",
+      "end_seconds": 170,
+      "end_human": "2:50",
+      "text": "项目代码我已经开源到了data部"
+    },
+    {
+      "start_seconds": 170,
+      "start_human": "2:50",
+      "end_seconds": 172,
+      "end_human": "2:52",
+      "text": "这个项目的完整开发路平"
+    },
+    {
+      "start_seconds": 172,
+      "start_human": "2:52",
+      "end_seconds": 175,
+      "end_human": "2:55",
+      "text": "教程文档、简历写法和面试体解"
+    },
+    {
+      "start_seconds": 175,
+      "start_human": "2:55",
+      "end_seconds": 177,
+      "end_human": "2:57",
+      "text": "也都放到了我的编程导航里"
+    },
+    {
+      "start_seconds": 177,
+      "start_human": "2:57",
+      "end_seconds": 180,
+      "end_human": "3:00",
+      "text": "你可以快速学习到AI应用开发全流程"
+    },
+    {
+      "start_seconds": 180,
+      "start_human": "3:00",
+      "end_seconds": 182,
+      "end_human": "3:02",
+      "text": "以及data为APP安全授权"
+    },
+    {
+      "start_seconds": 182,
+      "start_human": "3:02",
+      "end_seconds": 184,
+      "end_human": "3:04",
+      "text": "webhook自动触发增量翻译"
+    },
+    {
+      "start_seconds": 184,
+      "start_human": "3:04",
+      "end_seconds": 186,
+      "end_human": "3:06",
+      "text": "nbrout内网穿透调试"
+    },
+    {
+      "start_seconds": 186,
+      "start_human": "3:06",
+      "end_seconds": 189,
+      "end_human": "3:09",
+      "text": "wassail一键部署上线等实战技术"
+    },
+    {
+      "start_seconds": 189,
+      "start_human": "3:09",
+      "end_seconds": 191,
+      "end_human": "3:11",
+      "text": "拿来找工作也是很有竞争力的"
+    },
+    {
+      "start_seconds": 191,
+      "start_human": "3:11",
+      "end_seconds": 193,
+      "end_human": "3:13",
+      "text": "如果你想快速学习AI编程"
+    },
+    {
+      "start_seconds": 193,
+      "start_human": "3:13",
+      "end_seconds": 195,
+      "end_human": "3:15",
+      "text": "也可以看看我免费差缘的"
+    },
+    {
+      "start_seconds": 195,
+      "start_human": "3:15",
+      "end_seconds": 197,
+      "end_human": "3:17",
+      "text": "AI编程零基础入门教程"
+    },
+    {
+      "start_seconds": 197,
+      "start_human": "3:17",
+      "end_seconds": 199,
+      "end_human": "3:19",
+      "text": "有各种主流AI编程工具的用法"
+    },
+    {
+      "start_seconds": 199,
+      "start_human": "3:19",
+      "end_seconds": 201,
+      "end_human": "3:21",
+      "text": "AI开发的经验技巧"
+    },
+    {
+      "start_seconds": 201,
+      "start_human": "3:21",
+      "end_seconds": 205,
+      "end_human": "3:25",
+      "text": "带你用AI从零做出一种真正能用的产品"
+    },
+    {
+      "start_seconds": 205,
+      "start_human": "3:25",
+      "end_seconds": 206,
+      "end_human": "3:26",
+      "text": "我是鱼皮"
+    },
+    {
+      "start_seconds": 206,
+      "start_human": "3:26",
+      "end_seconds": 209,
+      "end_human": "3:29",
+      "text": "持续带大家用AI编程做有趣实用的项目"
+    },
+    {
+      "start_seconds": 209,
+      "start_human": "3:29",
+      "end_seconds": 210,
+      "end_human": "3:30",
+      "text": "欢迎关注一起学起来"
+    }
+  ],
+  "mind_map_markdown": "# Datab文档翻译平台项目概述\n\n## 项目背景\n- 解决开源项目文档仅中文导致海外用户无法访问的问题\n- 扩大项目国际影响力\n\n## 核心功能\n- 导入GitHub仓库\n- 选择翻译语言\n- 可视化文档选择\n- AI自动翻译\n- 自动创建合并请求\n- 智能插入多语言切换链接\n\n## 技术特点\n- 支持自动增量翻译\n- 可配置主流大模型API（GPT、Claude、Gemini、DeepSeek）\n- 无需人工翻译或复杂配置\n\n## 开发方式\n- 全程直播开发\n- 99%代码由AI生成\n- 使用Cursor等AI编程工具\n- 遵循现代AI应用开发流程\n\n## 项目成果\n- 不到一天完成开发并上线\n- 代码已开源\n- 附带完整教程和实战技术文档\n\n## 示例与流程\n- 示例1：AI编程教程因文档仅中文错失流量\n- 示例2：开发流程包括需求调研、技术设计、并行开发、测试验收\n- 示例3：扩展功能开发优化AI使用\n- 示例4：集成实战技术（GitHub App、Webhook、内网穿透、一键部署）\n\n## 关键价值\n- 提升开发效率\n- 降低国际化成本\n- 增强就业竞争力\n- 促进开源社区协作",
+  "source_text_status": {
+    "source_type": "speech_to_text",
+    "language": "zh",
+    "segment_count": 94,
+    "character_count": 1199,
+    "fallback_used": true
+  },
+  "disclaimer": "AI output is for quick understanding only. Please verify against the original video."
+}
