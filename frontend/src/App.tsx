@@ -7,13 +7,14 @@ import {
   Link2,
   LoaderCircle,
   PlayCircle,
-  Sparkles,
   Smartphone,
+  Sparkles,
   Video,
   Zap,
 } from 'lucide-react'
 import { startTransition, useMemo, useState } from 'react'
 
+import { VideoSummaryPanel } from './components/VideoSummaryPanel'
 import { downloadVideoFile, getApiAssetUrl, getDownloadLink, parseVideo } from './lib/api'
 import type { VideoFormatOption, VideoMeta } from './types'
 
@@ -23,35 +24,35 @@ const featureCards = [
   {
     id: 'platforms',
     title: '支持 1800+ 平台',
-    text: 'YouTube、Bilibili、抖音、TikTok、Instagram 等主流平台优先适配。',
+    text: 'YouTube、Bilibili、抖音、TikTok 等主流公开视频内容都能优先适配。',
     icon: BadgeCheck,
     tint: 'bg-sky-50 text-sky-500',
   },
   {
     id: 'speed',
-    title: '极速解析下载',
-    text: '智能解析视频链接，自动匹配更适合普通用户的下载方式，减少试错。',
+    title: '极简解析下载',
+    text: '输入链接即可解析，优先整理成普通用户能直接选择的成片下载格式。',
     icon: Zap,
     tint: 'bg-amber-50 text-amber-500',
   },
   {
     id: 'mobile',
     title: '手机也能用',
-    text: '适配手机浏览器，随时随地直接粘贴链接，无需额外安装 App。',
+    text: '移动端浏览器同样可用，不要求安装 App，复制链接就能开始。',
     icon: Smartphone,
     tint: 'bg-blue-50 text-blue-500',
   },
   {
     id: 'quality',
-    title: '多种清晰度',
-    text: '自动整理为少量成片选项，支持从流畅到高清的多种下载清晰度。',
+    title: '清晰度已整理',
+    text: '隐藏底层音视频流细节，只保留对普通用户更直观的下载选项。',
     icon: Clapperboard,
     tint: 'bg-violet-50 text-violet-500',
   },
   {
     id: 'ai',
-    title: 'AI 视频总结',
-    text: '后续将扩展视频总结、字幕翻译、批量下载和会员加速等能力。',
+    title: 'AI 总结增强',
+    text: '在下载结果里一键打开 AI 总结、思维导图和视频问答，不打断主流程。',
     icon: Sparkles,
     tint: 'bg-rose-50 text-rose-500',
   },
@@ -91,7 +92,8 @@ function App() {
   const thumbnailSrc = result ? getThumbnailSrc(result) : null
 
   async function handleParse() {
-    if (!url.trim()) {
+    const nextUrl = url.trim()
+    if (!nextUrl) {
       setError('请先粘贴一个公开视频链接。')
       return
     }
@@ -100,7 +102,7 @@ function App() {
     setError(null)
 
     try {
-      const data = await parseVideo(url.trim())
+      const data = await parseVideo(nextUrl)
       startTransition(() => {
         setResult(data)
         setSelectedFormat(
@@ -161,7 +163,6 @@ function App() {
               </div>
               <div>
                 <p className="text-sm font-semibold text-slate-900">SaveAny</p>
-                <p className="text-xs text-slate-400">万能视频下载</p>
               </div>
             </div>
 
@@ -189,20 +190,10 @@ function App() {
         <main>
           <section className="flex min-h-[calc(100vh-5.5rem)] flex-col items-center justify-center py-14 lg:min-h-[calc(100vh-2rem)] lg:pb-24 lg:pt-20">
             <div className="w-full text-center">
-              <div className="mx-auto inline-flex items-center gap-2 rounded-full border border-emerald-100 bg-white px-4 py-2 text-sm text-slate-500 shadow-sm">
-                <BadgeCheck className="text-emerald-500" size={16} />
-                支持 1800+ 提取器，核心下载一步完成
-              </div>
-
-              <h1 className="mt-7 text-4xl font-black tracking-[-0.06em] text-slate-950 sm:text-5xl lg:text-[4.6rem]">
+              <h1 className="text-4xl font-black leading-[1.12] tracking-[-0.012em] text-slate-950 sm:text-5xl lg:text-[4.6rem]">
                 万能视频下载器，
                 <span className="text-blue-500">一键保存</span>
               </h1>
-
-              <p className="mx-auto mt-5 max-w-[56rem] text-base leading-8 text-slate-500 sm:text-[1.32rem] sm:leading-9">
-                粘贴视频链接，智能解析，支持多种清晰度下载。YouTube、Bilibili、抖音、TikTok
-                等热门站点，随时随地，想下就下。
-              </p>
 
               <div className="mx-auto mt-9 max-w-[70rem] rounded-[2.2rem] border border-white/80 bg-white/95 p-4 shadow-[0_24px_64px_rgba(15,23,42,0.08)]">
                 <div className="flex flex-col gap-3 sm:flex-row">
@@ -221,7 +212,7 @@ function App() {
                     className="inline-flex items-center justify-center gap-2 rounded-[1.45rem] bg-blue-500 px-7 py-4 text-sm font-semibold text-white shadow-[0_16px_32px_rgba(59,130,246,0.28)] transition hover:bg-blue-600 disabled:cursor-not-allowed disabled:bg-blue-300 sm:min-w-[12rem] sm:px-9 sm:text-lg"
                   >
                     {isParsing ? <LoaderCircle className="animate-spin" size={18} /> : <Sparkles size={18} />}
-                    {isParsing ? '解析中' : '解析视频'}
+                    {isParsing ? '解析中...' : '解析视频'}
                   </button>
                 </div>
 
@@ -262,10 +253,9 @@ function App() {
 
           <section id="why-saveany" className="pt-20">
             <div className="mx-auto max-w-4xl text-center">
-              <h2 className="text-4xl font-black tracking-[-0.05em] text-slate-950 sm:text-5xl">
+              <h2 className="text-4xl font-black leading-[1.16] tracking-[-0.01em] text-slate-950 sm:text-5xl">
                 为什么选择 <span className="text-blue-500">SaveAny</span>
               </h2>
-              <p className="mt-4 text-xl text-slate-400">简单、快速、强大的视频下载体验</p>
             </div>
 
             <div className="mt-14 grid gap-5 md:grid-cols-2 xl:grid-cols-5">
@@ -273,7 +263,6 @@ function App() {
                 <FeatureCard key={item.id} title={item.title} text={item.text} tint={item.tint} icon={item.icon} />
               ))}
             </div>
-
           </section>
         </main>
       </div>
@@ -287,10 +276,7 @@ function EmptyResult() {
       <div className="flex size-16 items-center justify-center rounded-full bg-blue-50 text-blue-500">
         <PlayCircle size={28} />
       </div>
-      <h2 className="mt-5 text-2xl font-black tracking-[-0.04em] text-slate-950">先粘贴链接，再开始解析</h2>
-      <p className="mt-3 max-w-xl text-sm leading-7 text-slate-500 sm:text-base">
-        首屏只保留最核心的下载流程，其他扩展能力已经整体下沉到页面下方。
-      </p>
+      <h2 className="mt-5 text-2xl font-black leading-[1.2] tracking-[-0.008em] text-slate-950">先粘贴链接，再开始解析</h2>
     </div>
   )
 }
@@ -336,7 +322,7 @@ function ResultCard({
               {result.extractor ?? '未知平台'}
             </span>
           </div>
-          <h2 className="mt-4 text-3xl font-black leading-[1.15] tracking-[-0.05em] text-slate-950 xl:text-[2.45rem]">
+          <h2 className="mt-4 text-3xl font-black leading-[1.22] tracking-[-0.01em] text-slate-950 xl:text-[2.45rem]">
             {result.title}
           </h2>
           <div className="mt-5 flex flex-wrap gap-x-6 gap-y-3 text-xl text-slate-500">
@@ -344,17 +330,13 @@ function ResultCard({
             <span>{result.duration_human}</span>
             <span>{selectedFormatOption?.filesize_human ?? '大小未知'}</span>
           </div>
-          <p className="mt-6 text-lg leading-9 text-slate-400">{result.recommended_strategy.reason}</p>
         </div>
       </div>
 
       <div className="rounded-[2rem] border border-slate-200 bg-[linear-gradient(180deg,_#fbfdff,_#f8fbff)] p-5 shadow-[0_12px_28px_rgba(15,23,42,0.04)] sm:p-7">
         <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
           <div className="text-left">
-            <p className="text-2xl font-black tracking-[-0.04em] text-slate-950 sm:text-3xl">选择清晰度和格式</p>
-            <p className="mt-3 text-base text-slate-500 sm:text-lg">
-              默认推荐最高可用成片，已自动隐藏重复、纯音频、纯视频格式。
-            </p>
+            <p className="text-2xl font-black leading-[1.2] tracking-[-0.008em] text-slate-950 sm:text-3xl">选择清晰度和格式</p>
           </div>
           <span className="w-fit rounded-full border border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-slate-500 shadow-sm">
             已整理为 {result.formats.length} 个下载选项
@@ -380,22 +362,16 @@ function ResultCard({
               className="inline-flex min-w-[14rem] items-center justify-center gap-2 rounded-full bg-blue-500 px-7 py-4 text-lg font-semibold text-white shadow-[0_18px_34px_rgba(59,130,246,0.28)] transition hover:bg-blue-600 disabled:cursor-not-allowed disabled:bg-slate-300"
             >
               {isDownloading ? <LoaderCircle className="animate-spin" size={20} /> : <Download size={20} />}
-              {isDownloading ? '准备下载中' : '立即下载'}
+              {isDownloading ? '准备下载中...' : '立即下载'}
             </button>
-            <button
-              type="button"
-              className="inline-flex min-w-[12rem] items-center justify-center gap-2 rounded-full border-2 border-blue-500 bg-white px-7 py-4 text-lg font-semibold text-blue-500 transition hover:bg-blue-50"
-            >
-              <Sparkles size={20} />
-              AI 总结
-            </button>
+            <VideoSummaryPanel result={result} />
           </div>
 
           <div className="min-w-0 text-left">
             <p className="text-sm font-semibold text-slate-900">已选择</p>
             <p className="mt-1 truncate text-base text-slate-500">
               {selectedFormatOption
-                ? `${selectedFormatOption.label}（${selectedFormatOption.ext.toUpperCase()}，${selectedFormatOption.filesize_human}）`
+                ? `${selectedFormatOption.label} · ${selectedFormatOption.ext.toUpperCase()} · ${selectedFormatOption.filesize_human}`
                 : '请选择一个下载格式'}
             </p>
           </div>
@@ -470,7 +446,7 @@ function FeatureCard({
       <div className={`flex size-16 items-center justify-center rounded-2xl ${tint}`}>
         <Icon size={28} />
       </div>
-      <h3 className="mt-7 text-[1.9rem] font-black tracking-[-0.04em] text-slate-950">{title}</h3>
+      <h3 className="mt-7 text-[1.9rem] font-black leading-[1.22] tracking-[-0.008em] text-slate-950">{title}</h3>
       <p className="mt-4 text-lg leading-9 text-slate-400">{text}</p>
     </article>
   )

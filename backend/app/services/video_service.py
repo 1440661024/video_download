@@ -181,6 +181,24 @@ class DouyinResolver:
             copyright_notice="请仅下载你有权保存的内容，避免侵犯版权或违反平台规则。",
         )
 
+    def extract_summary_info(self, url: str) -> dict[str, Any]:
+        resolved = self._resolve_video(url)
+        return {
+            "id": self._extract_video_id(resolved["webpage_url"]),
+            "title": resolved["title"],
+            "description": "",
+            "duration": resolved["duration_seconds"],
+            "uploader": resolved["uploader"],
+            "channel": resolved["uploader"],
+            "thumbnail": resolved["thumbnail"],
+            "webpage_url": resolved["webpage_url"],
+            "extractor": "Douyin",
+            "extractor_key": "Douyin",
+            "subtitles": {},
+            "automatic_captions": {},
+            "_summary_media_url": resolved["download_url"],
+        }
+
     def get_direct_link(self, url: str, format_id: str) -> dict[str, Any]:
         if format_id != "douyin-main":
             raise VideoServiceError(
@@ -493,6 +511,8 @@ class VideoService:
         return YoutubeDL(opts)
 
     def extract_info(self, url: str) -> dict[str, Any]:
+        if self.douyin.supports(url):
+            return self.douyin.extract_summary_info(url)
         try:
             with self._ydl() as ydl:
                 info = ydl.extract_info(url, download=False)

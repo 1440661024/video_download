@@ -1,0 +1,46 @@
+{
+  "video_title": "Demo",
+  "source_url": "https://example.com/video",
+  "summary_mode": "study",
+  "overview": "Overview text",
+  "key_points": [
+    "Point A",
+    "Point B"
+  ],
+  "chapter_summaries": [
+    {
+      "title": "Introduction",
+      "start_seconds": 0,
+      "start_human": "0:00",
+      "summary": "Chapter summary"
+    }
+  ],
+  "takeaways": [
+    "Takeaway"
+  ],
+  "transcript_segments": [
+    {
+      "start_seconds": 0,
+      "start_human": "0:00",
+      "end_seconds": 12,
+      "end_human": "0:12",
+      "text": "First transcript segment First transcript segment First transcript segment First transcript segment First transcript segment First transcript segment First transcript segment First transcript segment First transcript segment First transcript segment "
+    },
+    {
+      "start_seconds": 90,
+      "start_human": "1:30",
+      "end_seconds": 102,
+      "end_human": "1:42",
+      "text": "Second transcript segment Second transcript segment Second transcript segment Second transcript segment Second transcript segment Second transcript segment Second transcript segment Second transcript segment Second transcript segment Second transcript segment "
+    }
+  ],
+  "mind_map_markdown": "# Demo\n- Point A\n  - Detail",
+  "source_text_status": {
+    "source_type": "speech_to_text",
+    "language": "zh",
+    "segment_count": 2,
+    "character_count": 510,
+    "fallback_used": true
+  },
+  "disclaimer": "AI output is for quick understanding only. Please verify against the original video."
+}

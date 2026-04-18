@@ -1,0 +1,102 @@
+{
+  "source_type": "speech_to_text",
+  "language": "zh",
+  "fallback_used": true,
+  "segments": [
+    {
+      "start_seconds": 3,
+      "end_seconds": 6,
+      "text": "土鸟老师后半夜那两根呆子会被隐形难透不扯电吗"
+    },
+    {
+      "start_seconds": 6,
+      "end_seconds": 7,
+      "text": "我看你刷10遍了"
+    },
+    {
+      "start_seconds": 10,
+      "end_seconds": 16,
+      "text": "现在就扯 哎呀 裸着呀"
+    },
+    {
+      "start_seconds": 16,
+      "end_seconds": 18,
+      "text": "不行啊 不行 不行"
+    },
+    {
+      "start_seconds": 18,
+      "end_seconds": 19,
+      "text": "嗯 咱们"
+    },
+    {
+      "start_seconds": 19,
+      "end_seconds": 22,
+      "text": "我不能这样 这样子播很不健康"
+    },
+    {
+      "start_seconds": 22,
+      "end_seconds": 24,
+      "text": "又导青少年了"
+    },
+    {
+      "start_seconds": 24,
+      "end_seconds": 29,
+      "text": "拍什么 片大片 我考你们看了直接就是"
+    },
+    {
+      "start_seconds": 33,
+      "end_seconds": 35,
+      "text": "我也大行 健康我不是为假的"
+    },
+    {
+      "start_seconds": 35,
+      "end_seconds": 37,
+      "text": "嗯 你也知道嘛 就是"
+    },
+    {
+      "start_seconds": 37,
+      "end_seconds": 41,
+      "text": "我这种女主播晚上"
+    },
+    {
+      "start_seconds": 42,
+      "end_seconds": 45,
+      "text": "难免会有一个人在家里面躺在被窝里"
+    },
+    {
+      "start_seconds": 45,
+      "end_seconds": 49,
+      "text": "难免会有就是想要打两把王中荣药的时候"
+    },
+    {
+      "start_seconds": 49,
+      "end_seconds": 50,
+      "text": "如果我"
+    },
+    {
+      "start_seconds": 51,
+      "end_seconds": 52,
+      "text": "做了没假的话"
+    },
+    {
+      "start_seconds": 52,
+      "end_seconds": 56,
+      "text": "那个指甲就在屏幕上就不好按了"
+    },
+    {
+      "start_seconds": 56,
+      "end_seconds": 57,
+      "text": "所以"
+    },
+    {
+      "start_seconds": 58,
+      "end_seconds": 59,
+      "text": "就没做了"
+    },
+    {
+      "start_seconds": 59,
+      "end_seconds": 63,
+      "text": "而且就是平时做电脑面前可能还会打一些电脑游戏"
+    }
+  ]
+}

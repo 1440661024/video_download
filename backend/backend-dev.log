@@ -1,0 +1,22 @@
+INFO:     127.0.0.1:54957 - "GET /api/health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52670 - "POST /api/video/parse HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57441 - "GET /api/video/thumbnail?url=http%3A%2F%2Fi2.hdslb.com%2Fbfs%2Farchive%2Ff1d6a380f6db717c003e527abda0a2610113b073.jpg&source_url=https%3A%2F%2Fwww.bilibili.com%2Fvideo%2FBV1fKQABiEiW%3Fspm_id_from%3D333.1007.tianma.5-1-15.click HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52670 - "GET /api/summarize?video_url=https%3A%2F%2Fwww.bilibili.com%2Fvideo%2FBV1fKQABiEiW%3Fspm_id_from%3D333.1007.tianma.5-1-15.click&preferred_language=zh-CN HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60798 - "GET /api/transcript?video_url=https%3A%2F%2Fwww.bilibili.com%2Fvideo%2FBV1fKQABiEiW%3Fspm_id_from%3D333.1007.tianma.5-1-15.click&preferred_language=zh-CN HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61539 - "POST /api/video/parse HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54911 - "GET /api/video/thumbnail?url=http%3A%2F%2Fi2.hdslb.com%2Fbfs%2Farchive%2Fc68086d590e99ff8b54cf68fcb24644c5ff004bc.jpg&source_url=https%3A%2F%2Fwww.bilibili.com%2Fvideo%2FBV1zPQdBUErA%3Fspm_id_from%3D333.1007.tianma.5-3-17.click HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54613 - "GET /api/summarize?video_url=https%3A%2F%2Fwww.bilibili.com%2Fvideo%2FBV1zPQdBUErA%3Fspm_id_from%3D333.1007.tianma.5-3-17.click&preferred_language=zh-CN HTTP/1.1" 200 OK
+[download]   0.1% of 1007.41KiB at  Unknown B/s ETA Unknown[download]   0.3% of 1007.41KiB at    1.94MiB/s ETA 00:00  [download]   0.7% of 1007.41KiB at    4.52MiB/s ETA 00:00[download]   1.5% of 1007.41KiB at  623.67KiB/s ETA 00:01[download]   3.1% of 1007.41KiB at  482.44KiB/s ETA 00:02[download]   6.3% of 1007.41KiB at  547.86KiB/s ETA 00:01[download]  12.6% of 1007.41KiB at    1.04MiB/s ETA 00:00[download]  25.3% of 1007.41KiB at    1.05MiB/s ETA 00:00[download]  50.7% of 1007.41KiB at 1017.96KiB/s ETA 00:00[download] 100.0% of 1007.41KiB at    1.21MiB/s ETA 00:00[download] 100% of 1007.41KiB in 00:00:02 at 446.93KiB/s                                                         INFO:     127.0.0.1:62274 - "GET /api/mindmap?video_url=https%3A%2F%2Fwww.bilibili.com%2Fvideo%2FBV1fKQABiEiW%3Fspm_id_from%3D333.1007.tianma.5-1-15.click&preferred_language=zh-CN HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51419 - "OPTIONS /api/video/parse HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51419 - "POST /api/video/parse HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60059 - "GET /api/video/thumbnail?url=http%3A%2F%2Fi2.hdslb.com%2Fbfs%2Farchive%2Fc68086d590e99ff8b54cf68fcb24644c5ff004bc.jpg&source_url=https%3A%2F%2Fwww.bilibili.com%2Fvideo%2FBV1zPQdBUErA%3Fspm_id_from%3D333.1007.tianma.5-3-17.click HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60608 - "GET /api/summarize?video_url=https%3A%2F%2Fwww.bilibili.com%2Fvideo%2FBV1zPQdBUErA%3Fspm_id_from%3D333.1007.tianma.5-3-17.click&preferred_language=zh-CN HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53483 - "GET /api/transcript?video_url=https%3A%2F%2Fwww.bilibili.com%2Fvideo%2FBV1zPQdBUErA%3Fspm_id_from%3D333.1007.tianma.5-3-17.click&preferred_language=zh-CN HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53483 - "GET /api/mindmap?video_url=https%3A%2F%2Fwww.bilibili.com%2Fvideo%2FBV1zPQdBUErA%3Fspm_id_from%3D333.1007.tianma.5-3-17.click&preferred_language=zh-CN HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51582 - "GET /api/qa?video_url=https%3A%2F%2Fwww.bilibili.com%2Fvideo%2FBV1zPQdBUErA%3Fspm_id_from%3D333.1007.tianma.5-3-17.click&question=%E9%87%8D%E7%82%B9&preferred_language=zh-CN HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60815 - "OPTIONS /api/video/parse HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60815 - "POST /api/video/parse HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60815 - "GET /api/summarize?video_url=https%3A%2F%2Fwww.bilibili.com%2Fvideo%2FBV1zPQdBUErA%3Fspm_id_from%3D333.1007.tianma.5-3-17.click&preferred_language=zh-CN HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58634 - "GET /api/video/thumbnail?url=http%3A%2F%2Fi2.hdslb.com%2Fbfs%2Farchive%2Fc68086d590e99ff8b54cf68fcb24644c5ff004bc.jpg&source_url=https%3A%2F%2Fwww.bilibili.com%2Fvideo%2FBV1zPQdBUErA%3Fspm_id_from%3D333.1007.tianma.5-3-17.click HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56523 - "GET /api/transcript?video_url=https%3A%2F%2Fwww.bilibili.com%2Fvideo%2FBV1zPQdBUErA%3Fspm_id_from%3D333.1007.tianma.5-3-17.click&preferred_language=zh-CN HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52670 - "GET /api/mindmap?video_url=https%3A%2F%2Fwww.bilibili.com%2Fvideo%2FBV1zPQdBUErA%3Fspm_id_from%3D333.1007.tianma.5-3-17.click&preferred_language=zh-CN HTTP/1.1" 200 OK

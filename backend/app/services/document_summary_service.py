@@ -1,0 +1,352 @@
+from __future__ import annotations
+
+import json
+from typing import Any, Iterator
+
+import httpx
+from openai import APIConnectionError, APIError, APITimeoutError, AuthenticationError, RateLimitError
+
+from app.schemas_summary import VideoSummarySourceStatus
+from app.services.ai_client import AIClient
+from app.services.summary_cache import SummaryCacheStore
+from app.services.summary_service import SummaryServiceError
+from app.services.transcript_models import TranscriptBundle, TranscriptSegment
+from app.services.transcript_service import TranscriptService
+from app.services.video_service import VideoService
+
+
+class DocumentSummaryService:
+    def __init__(
+        self,
+        *,
+        video_service: VideoService | None = None,
+        transcript_service: TranscriptService | None = None,
+        ai_client: AIClient | None = None,
+        cache_store: SummaryCacheStore | None = None,
+    ) -> None:
+        self.cache_store = cache_store or SummaryCacheStore()
+        self.video_service = video_service or VideoService()
+        self.transcript_service = transcript_service or TranscriptService(cache_store=self.cache_store)
+        self.ai_client = ai_client or AIClient()
+
+    def stream_summary(self, *, url: str, preferred_language: str | None) -> Iterator[str]:
+        info, _, transcript_text = self.prepare_summary_context(
+            url=url,
+            preferred_language=preferred_language,
+            max_chars=10000,
+        )
+        yield from self.stream_summary_from_context(
+            url=url,
+            preferred_language=preferred_language,
+            info=info,
+            transcript_text=transcript_text,
+        )
+
+    def prepare_summary_context(
+        self,
+        *,
+        url: str,
+        preferred_language: str | None,
+        max_chars: int,
+    ) -> tuple[dict[str, Any], TranscriptBundle, str]:
+        return self._prepare_subtitle_text(
+            url=url,
+            preferred_language=preferred_language,
+            max_chars=max_chars,
+        )
+
+    def stream_summary_from_context(
+        self,
+        *,
+        url: str,
+        preferred_language: str | None,
+        info: dict[str, Any],
+        transcript_text: str,
+    ) -> Iterator[str]:
+        model_name = getattr(self.ai_client, "model", "default-model")
+        cached = self.cache_store.load_text(
+            kind="document-summary",
+            url=url,
+            preferred_language=preferred_language,
+            model=model_name,
+        )
+        if cached is not None:
+            yield cached
+            return
+
+        collected: list[str] = []
+        for chunk in self._complete_text_stream(
+            system_prompt=(
+                "You are a video learning assistant. "
+                "Write polished Markdown in the user's preferred language. "
+                "When responding in Chinese, always use Simplified Chinese characters. "
+                "Be concise, structured, and faithful to the supplied transcript."
+            ),
+            user_prompt=(
+                "Please summarize the following video for fast learning.\n\n"
+                "Use this exact structure in Markdown:\n"
+                "## 视频主题概览\n"
+                "## 核心知识点\n"
+                "## 分段总结\n"
+                "## 关键结论 / 学习收获\n\n"
+                f"Video title: {info.get('title') or 'Untitled video'}\n"
+                f"Video description: {str(info.get('description') or '').strip()[:1200] or '(empty)'}\n\n"
+                f"Transcript:\n{transcript_text}"
+            ),
+            temperature=0.4,
+            max_tokens=2000,
+        ):
+            collected.append(chunk)
+            yield chunk
+
+        final_text = "".join(collected).strip()
+        if final_text:
+            self.cache_store.save_text(
+                kind="document-summary",
+                url=url,
+                preferred_language=preferred_language,
+                model=model_name,
+                text=final_text,
+            )
+
+    def generate_mindmap(self, *, url: str, preferred_language: str | None) -> str:
+        model_name = getattr(self.ai_client, "model", "default-model")
+        cached = self.cache_store.load_text(
+            kind="document-mindmap",
+            url=url,
+            preferred_language=preferred_language,
+            model=model_name,
+        )
+        if cached is not None:
+            return cached
+
+        info, _, transcript_text = self._prepare_subtitle_text(
+            url=url,
+            preferred_language=preferred_language,
+            max_chars=5000,
+        )
+        content = self._complete_text(
+            system_prompt=(
+                "You are a learning assistant that turns transcripts into structured mind maps. "
+                "When responding in Chinese, always use Simplified Chinese characters. "
+                "Return valid JSON only."
+            ),
+            user_prompt=(
+                "Generate a compact mind map in JSON.\n"
+                "Use this shape exactly:\n"
+                '{"title":"...", "children":[{"title":"...", "children":["...", "..."]}]}\n'
+                "Keep the hierarchy clear and use only information supported by the transcript.\n\n"
+                f"Video title: {info.get('title') or 'Untitled video'}\n"
+                f"Transcript:\n{transcript_text}"
+            ),
+            temperature=0.3,
+            max_tokens=1000,
+        ).strip()
+        normalized = self._normalize_json_text(content)
+        self.cache_store.save_text(
+            kind="document-mindmap",
+            url=url,
+            preferred_language=preferred_language,
+            model=model_name,
+            text=normalized,
+        )
+        return normalized
+
+    def stream_answer(self, *, url: str, question: str, preferred_language: str | None) -> Iterator[str]:
+        _, _, transcript_text = self._prepare_subtitle_text(
+            url=url,
+            preferred_language=preferred_language,
+            max_chars=5000,
+        )
+        yield from self._complete_text_stream(
+            system_prompt=(
+                "You are a grounded video Q&A assistant. "
+                "When responding in Chinese, always use Simplified Chinese characters. "
+                "Answer only from the supplied transcript. "
+                "If the transcript does not support an answer, say so clearly."
+            ),
+            user_prompt=(
+                "Answer the user's question using only the transcript below.\n\n"
+                f"Transcript:\n{transcript_text}\n\n"
+                f"Question:\n{question}"
+            ),
+            temperature=0.2,
+            max_tokens=1000,
+        )
+
+    def get_source_status(self, *, url: str, preferred_language: str | None) -> VideoSummarySourceStatus:
+        _, bundle = self._prepare_bundle(url=url, preferred_language=preferred_language)
+        return self._bundle_to_status(bundle)
+
+    def get_transcript(self, *, url: str, preferred_language: str | None) -> dict[str, Any]:
+        _, bundle, transcript_text = self._prepare_subtitle_text(
+            url=url,
+            preferred_language=preferred_language,
+            max_chars=50000,
+        )
+        return {
+            "transcript": transcript_text,
+            "source_status": self._bundle_to_status(bundle).model_dump(mode="json"),
+            "segments": [
+                {
+                    "start_seconds": segment.start_seconds,
+                    "start_human": self._format_duration(segment.start_seconds),
+                    "end_seconds": segment.end_seconds,
+                    "end_human": self._format_duration(segment.end_seconds),
+                    "text": segment.text,
+                }
+                for segment in bundle.segments
+            ],
+        }
+
+    def _prepare_subtitle_text(
+        self,
+        *,
+        url: str,
+        preferred_language: str | None,
+        max_chars: int,
+    ) -> tuple[dict[str, Any], TranscriptBundle, str]:
+        info, bundle = self._prepare_bundle(url=url, preferred_language=preferred_language)
+        self._ensure_document_supported(bundle)
+
+        transcript_text = self._segments_to_text(bundle.segments, max_chars=max_chars)
+        if len(transcript_text.strip()) < 120:
+            raise SummaryServiceError(
+                code="TRANSCRIPT_UNAVAILABLE",
+                message="当前视频缺少可用字幕文本，暂时无法生成 AI 总结。",
+            )
+
+        return info, bundle, transcript_text
+
+    def _prepare_bundle(
+        self,
+        *,
+        url: str,
+        preferred_language: str | None,
+    ) -> tuple[dict[str, Any], TranscriptBundle]:
+        if not self.ai_client.is_configured():
+            raise SummaryServiceError(
+                code="AI_PROVIDER_ERROR",
+                message="AI 服务未配置，请先设置 AI_API_KEY。",
+            )
+
+        try:
+            info = self.video_service.extract_info(url)
+        except Exception as exc:
+            raise SummaryServiceError(
+                code="SUMMARY_NOT_SUPPORTED",
+                message="当前视频暂不支持 AI 总结，暂时无法解析视频信息。",
+                detail=str(exc),
+            ) from exc
+
+        try:
+            bundle = self.transcript_service.build_bundle(info, preferred_language, source_url=url)
+        except httpx.HTTPError as exc:
+            raise SummaryServiceError(
+                code="TRANSCRIPT_UNAVAILABLE",
+                message="字幕获取失败，当前视频暂时无法进行 AI 分析。",
+                detail=str(exc),
+            ) from exc
+
+        return info, bundle
+
+    def _ensure_document_supported(self, bundle: TranscriptBundle) -> None:
+        if bundle.source_type in {"human_subtitles", "auto_subtitles", "speech_to_text"}:
+            return
+        raise SummaryServiceError(
+            code="TRANSCRIPT_UNAVAILABLE",
+            message="当前视频缺少可用字幕或语音识别文本，暂时无法生成 AI 结果。",
+            detail={"source_type": bundle.source_type},
+        )
+
+    def _bundle_to_status(self, bundle: TranscriptBundle) -> VideoSummarySourceStatus:
+        return VideoSummarySourceStatus(
+            source_type=bundle.source_type,
+            language=bundle.language,
+            segment_count=bundle.segment_count,
+            character_count=bundle.character_count,
+            fallback_used=bundle.fallback_used,
+        )
+
+    def _segments_to_text(self, segments: list[TranscriptSegment], *, max_chars: int) -> str:
+        lines: list[str] = []
+        current = 0
+        for segment in segments:
+            line = segment.text.strip()
+            if not line:
+                continue
+            if segment.start_seconds is not None:
+                line = f"[{self._format_duration(segment.start_seconds)}] {line}"
+            projected = current + len(line) + 1
+            if lines and projected > max_chars:
+                break
+            lines.append(line)
+            current = projected
+        return "\n".join(lines)
+
+    def _normalize_json_text(self, content: str) -> str:
+        try:
+            return json.dumps(json.loads(content), ensure_ascii=False, indent=2)
+        except json.JSONDecodeError:
+            start = content.find("{")
+            end = content.rfind("}")
+            if start >= 0 and end > start:
+                candidate = content[start : end + 1]
+                try:
+                    return json.dumps(json.loads(candidate), ensure_ascii=False, indent=2)
+                except json.JSONDecodeError:
+                    pass
+        raise SummaryServiceError(
+            code="AI_RESPONSE_INVALID",
+            message="AI 返回的思维导图结构无效。",
+            detail=content,
+        )
+
+    def _complete_text(
+        self,
+        *,
+        system_prompt: str,
+        user_prompt: str,
+        temperature: float,
+        max_tokens: int | None,
+    ) -> str:
+        try:
+            return self.ai_client.complete_text(
+                system_prompt=system_prompt,
+                user_prompt=user_prompt,
+                temperature=temperature,
+                max_tokens=max_tokens,
+            )
+        except APITimeoutError as exc:
+            raise SummaryServiceError("SUMMARY_TIMEOUT", "AI 请求超时，请稍后重试。", str(exc)) from exc
+        except (AuthenticationError, RateLimitError, APIConnectionError, APIError) as exc:
+            raise SummaryServiceError("AI_PROVIDER_ERROR", "AI 服务暂时不可用，请检查配置后重试。", str(exc)) from exc
+
+    def _complete_text_stream(
+        self,
+        *,
+        system_prompt: str,
+        user_prompt: str,
+        temperature: float,
+        max_tokens: int | None,
+    ) -> Iterator[str]:
+        try:
+            yield from self.ai_client.complete_text_stream(
+                system_prompt=system_prompt,
+                user_prompt=user_prompt,
+                temperature=temperature,
+                max_tokens=max_tokens,
+            )
+        except APITimeoutError as exc:
+            raise SummaryServiceError("SUMMARY_TIMEOUT", "AI 请求超时，请稍后重试。", str(exc)) from exc
+        except (AuthenticationError, RateLimitError, APIConnectionError, APIError) as exc:
+            raise SummaryServiceError("AI_PROVIDER_ERROR", "AI 服务暂时不可用，请检查配置后重试。", str(exc)) from exc
+
+    def _format_duration(self, seconds: int | None) -> str | None:
+        if seconds is None:
+            return None
+        hours, remainder = divmod(max(0, seconds), 3600)
+        minutes, secs = divmod(remainder, 60)
+        if hours:
+            return f"{hours:d}:{minutes:02d}:{secs:02d}"
+        return f"{minutes:d}:{secs:02d}"
