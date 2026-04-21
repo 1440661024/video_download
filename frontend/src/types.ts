@@ -29,10 +29,12 @@ export interface VideoMeta {
   source_url: string
   title: string
   thumbnail: string | null
+  description: string | null
   duration_seconds: number | null
   duration_human: string
   uploader: string | null
   extractor: string | null
+  view_count: number | null
   webpage_url: string | null
   can_use_direct_link: boolean
   recommended_strategy: DownloadStrategy

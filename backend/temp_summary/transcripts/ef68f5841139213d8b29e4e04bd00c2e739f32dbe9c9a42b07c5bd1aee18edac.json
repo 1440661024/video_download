@@ -1,0 +1,487 @@
+{
+  "source_type": "speech_to_text",
+  "language": "zh",
+  "fallback_used": true,
+  "segments": [
+    {
+      "start_seconds": 0,
+      "end_seconds": 1,
+      "text": "你还记得这个生化学色吗"
+    },
+    {
+      "start_seconds": 1,
+      "end_seconds": 4,
+      "text": "十多年前CF最没有存在感的生化幽灵之一"
+    },
+    {
+      "start_seconds": 4,
+      "end_seconds": 5,
+      "text": "它就是迷雾幽灵"
+    },
+    {
+      "start_seconds": 5,
+      "end_seconds": 7,
+      "text": "这个学色诞生于16年前的今天"
+    },
+    {
+      "start_seconds": 7,
+      "end_seconds": 9,
+      "text": "2010年4月9号的生化第三季版本"
+    },
+    {
+      "start_seconds": 9,
+      "end_seconds": 11,
+      "text": "关于这个学色的设计"
+    },
+    {
+      "start_seconds": 11,
+      "end_seconds": 12,
+      "text": "说实话和隔壁CFNL一模一样"
+    },
+    {
+      "start_seconds": 12,
+      "end_seconds": 14,
+      "text": "但是在CF这边"
+    },
+    {
+      "start_seconds": 14,
+      "end_seconds": 15,
+      "text": "烟雾效果对幽灵方式不没有什么用"
+    },
+    {
+      "start_seconds": 15,
+      "end_seconds": 16,
+      "text": "原因非常简单"
+    },
+    {
+      "start_seconds": 16,
+      "end_seconds": 18,
+      "text": "CF的生化幽灵是会发光的"
+    },
+    {
+      "start_seconds": 18,
+      "end_seconds": 20,
+      "text": "这些光斑在黑色烟雾里面反而更扎眼"
+    },
+    {
+      "start_seconds": 20,
+      "end_seconds": 22,
+      "text": "它不像隔壁CFNL的迷雾幽灵"
+    },
+    {
+      "start_seconds": 22,
+      "end_seconds": 24,
+      "text": "它的烟雾还有显上效果"
+    },
+    {
+      "start_seconds": 24,
+      "end_seconds": 25,
+      "text": "那是十打十的团队增力"
+    },
+    {
+      "start_seconds": 25,
+      "end_seconds": 27,
+      "text": "这就让技能的使用型大打折扣"
+    },
+    {
+      "start_seconds": 27,
+      "end_seconds": 29,
+      "text": "更离谱的还得是进化时候的手部动画"
+    },
+    {
+      "start_seconds": 29,
+      "end_seconds": 31,
+      "text": "也不知道当时的设计师是怎么想的"
+    },
+    {
+      "start_seconds": 31,
+      "end_seconds": 33,
+      "text": "他加了一段没法许少的魔爪丝动作"
+    },
+    {
+      "start_seconds": 33,
+      "end_seconds": 35,
+      "text": "这段时间内就算人类站在旁边"
+    },
+    {
+      "start_seconds": 35,
+      "end_seconds": 37,
+      "text": "你也只能干看着 没有办法抓人"
+    },
+    {
+      "start_seconds": 37,
+      "end_seconds": 38,
+      "text": "整个角色的设计缺陷非常多"
+    },
+    {
+      "start_seconds": 38,
+      "end_seconds": 40,
+      "text": "偏偏价格还卖的非常贵"
+    },
+    {
+      "start_seconds": 40,
+      "end_seconds": 42,
+      "text": "这些原因让他成为了游戏中最冷门的幽灵"
+    },
+    {
+      "start_seconds": 42,
+      "end_seconds": 44,
+      "text": "在当时几乎没有什么玩家会选择他"
+    },
+    {
+      "start_seconds": 44,
+      "end_seconds": 47,
+      "text": "大多数玩家买生化角色还是会选择疯狂宝贝"
+    },
+    {
+      "start_seconds": 47,
+      "end_seconds": 48,
+      "text": "不过在背景设定中"
+    },
+    {
+      "start_seconds": 48,
+      "end_seconds": 49,
+      "text": "迷雾幽灵还是很强的"
+    },
+    {
+      "start_seconds": 49,
+      "end_seconds": 51,
+      "text": "在早期的生化战场"
+    },
+    {
+      "start_seconds": 51,
+      "end_seconds": 52,
+      "text": "数百名士兵被黑色烟雾所干扰"
+    },
+    {
+      "start_seconds": 52,
+      "end_seconds": 54,
+      "text": "他们连对方长什么样的没有看清"
+    },
+    {
+      "start_seconds": 54,
+      "end_seconds": 55,
+      "text": "就倒在了血泊中"
+    },
+    {
+      "start_seconds": 55,
+      "end_seconds": 57,
+      "text": "这一切的凶手就是迷雾幽灵"
+    },
+    {
+      "start_seconds": 57,
+      "end_seconds": 58,
+      "text": "没有人知道它在来历"
+    },
+    {
+      "start_seconds": 58,
+      "end_seconds": 60,
+      "text": "幸存的人类只看清它所守的电段上"
+    },
+    {
+      "start_seconds": 60,
+      "end_seconds": 62,
+      "text": "沾满了致命的生化病毒"
+    },
+    {
+      "start_seconds": 62,
+      "end_seconds": 63,
+      "text": "在背景故事方面"
+    },
+    {
+      "start_seconds": 63,
+      "end_seconds": 64,
+      "text": "迷雾幽灵表示沾际可查"
+    },
+    {
+      "start_seconds": 64,
+      "end_seconds": 66,
+      "text": "一般的人类完全不是它的对手"
+    },
+    {
+      "start_seconds": 66,
+      "end_seconds": 68,
+      "text": "不过游戏里面实际表现比较牢"
+    },
+    {
+      "start_seconds": 68,
+      "end_seconds": 68,
+      "text": "没有幽灵之刃的话"
+    },
+    {
+      "start_seconds": 68,
+      "end_seconds": 69,
+      "text": "媳妇抓不到人"
+    },
+    {
+      "start_seconds": 69,
+      "end_seconds": 71,
+      "text": "然后再补充一下外服的一些背景故事"
+    },
+    {
+      "start_seconds": 71,
+      "end_seconds": 74,
+      "text": "名物幽灵的出身地应该是生化实验室的下水道"
+    },
+    {
+      "start_seconds": 74,
+      "end_seconds": 76,
+      "text": "这也是它看起来秀奇般般的原因"
+    },
+    {
+      "start_seconds": 76,
+      "end_seconds": 78,
+      "text": "因为在下水道遭到了非常严重的腐蚀"
+    },
+    {
+      "start_seconds": 78,
+      "end_seconds": 81,
+      "text": "这个版本还推出了一把很经典的挑战和生化神器"
+    },
+    {
+      "start_seconds": 81,
+      "end_seconds": 82,
+      "text": "黄天RPK"
+    },
+    {
+      "start_seconds": 82,
+      "end_seconds": 84,
+      "text": "不过在当时它还是摆成脸色的奖励"
+    },
+    {
+      "start_seconds": 84,
+      "end_seconds": 85,
+      "text": "只能通过比赛获取"
+    },
+    {
+      "start_seconds": 85,
+      "end_seconds": 88,
+      "text": "直到后来挑战模式更新才被放进了黄金箱子"
+    },
+    {
+      "start_seconds": 88,
+      "end_seconds": 90,
+      "text": "在那之后才开始在平民玩家中普及"
+    },
+    {
+      "start_seconds": 90,
+      "end_seconds": 93,
+      "text": "当时小城市的摆成连赛大多数在小网吧举办"
+    },
+    {
+      "start_seconds": 93,
+      "end_seconds": 96,
+      "text": "这个版本还纯是推出了三个等级的网吧专属枪械"
+    },
+    {
+      "start_seconds": 96,
+      "end_seconds": 97,
+      "text": "青铜白银水晶系列"
+    },
+    {
+      "start_seconds": 97,
+      "end_seconds": 99,
+      "text": "虽然说不如黄金系列稀有"
+    },
+    {
+      "start_seconds": 99,
+      "end_seconds": 100,
+      "text": "但也是那时候大佬身份的象征"
+    },
+    {
+      "start_seconds": 100,
+      "end_seconds": 102,
+      "text": "而现在别说KK网吧了"
+    },
+    {
+      "start_seconds": 102,
+      "end_seconds": 104,
+      "text": "连网吧这个行业都快走到墨西了"
+    },
+    {
+      "start_seconds": 104,
+      "end_seconds": 106,
+      "text": "像三角洲立水寒那种三端不通手游"
+    },
+    {
+      "start_seconds": 106,
+      "end_seconds": 107,
+      "text": "才是这个时代的版本答案"
+    },
+    {
+      "start_seconds": 107,
+      "end_seconds": 109,
+      "text": "也确实让人感叹时代变了"
+    },
+    {
+      "start_seconds": 109,
+      "end_seconds": 111,
+      "text": "既然是生化第三季"
+    },
+    {
+      "start_seconds": 111,
+      "end_seconds": 112,
+      "text": "当然少不了生化模式地图的推出"
+    },
+    {
+      "start_seconds": 112,
+      "end_seconds": 114,
+      "text": "当时这个版本推出了死亡中心"
+    },
+    {
+      "start_seconds": 114,
+      "end_seconds": 116,
+      "text": "这张图至今也没有被删除"
+    },
+    {
+      "start_seconds": 116,
+      "end_seconds": 117,
+      "text": "只是玩的人不多了"
+    },
+    {
+      "start_seconds": 117,
+      "end_seconds": 119,
+      "text": "文艺箱最深的是那个非常难跳的广告牌"
+    },
+    {
+      "start_seconds": 119,
+      "end_seconds": 121,
+      "text": "以前这个位置可是一个热门手点"
+    },
+    {
+      "start_seconds": 121,
+      "end_seconds": 123,
+      "text": "总是有一堆人排队往上跳"
+    },
+    {
+      "start_seconds": 123,
+      "end_seconds": 124,
+      "text": "还有一个地方我们称呼为地牢"
+    },
+    {
+      "start_seconds": 124,
+      "end_seconds": 126,
+      "text": "如果人类不打最玻璃"
+    },
+    {
+      "start_seconds": 126,
+      "end_seconds": 128,
+      "text": "那么幽灵跳进去会直接把自己关在里面"
+    },
+    {
+      "start_seconds": 128,
+      "end_seconds": 131,
+      "text": "这张图也是早期CF比较少见的可互动地图"
+    },
+    {
+      "start_seconds": 131,
+      "end_seconds": 132,
+      "text": "有个防守点有可以开关的自动门"
+    },
+    {
+      "start_seconds": 132,
+      "end_seconds": 135,
+      "text": "那会从有手机的玩家会故意开门方向示进来"
+    },
+    {
+      "start_seconds": 135,
+      "end_seconds": 137,
+      "text": "当时还推出了两张突卫模式地图"
+    },
+    {
+      "start_seconds": 137,
+      "end_seconds": 138,
+      "text": "一张是运出船的改版"
+    },
+    {
+      "start_seconds": 138,
+      "end_seconds": 140,
+      "text": "后来这张图改名叫做远洋霍伦"
+    },
+    {
+      "start_seconds": 140,
+      "end_seconds": 142,
+      "text": "另一张是由戴浩C修改的教堂广场"
+    },
+    {
+      "start_seconds": 142,
+      "end_seconds": 145,
+      "text": "这两张地图虽然年代非常久远"
+    },
+    {
+      "start_seconds": 145,
+      "end_seconds": 147,
+      "text": "但却是突卫模式玩法的最后一次更新"
+    },
+    {
+      "start_seconds": 147,
+      "end_seconds": 149,
+      "text": "从那以后这个模式就再也没有过新地图了"
+    },
+    {
+      "start_seconds": 149,
+      "end_seconds": 151,
+      "text": "突卫模式可以说已经被官方完全放弃"
+    },
+    {
+      "start_seconds": 151,
+      "end_seconds": 152,
+      "text": "很多玩法也是这样"
+    },
+    {
+      "start_seconds": 152,
+      "end_seconds": 154,
+      "text": "比如说幽灵模式"
+    },
+    {
+      "start_seconds": 154,
+      "end_seconds": 155,
+      "text": "还有静止武器的挑战模式等"
+    },
+    {
+      "start_seconds": 155,
+      "end_seconds": 158,
+      "text": "他们都是在某一个版本之后再也没有了更新"
+    },
+    {
+      "start_seconds": 158,
+      "end_seconds": 160,
+      "text": "不过最近CNF要返场一个特别早的玩法"
+    },
+    {
+      "start_seconds": 160,
+      "end_seconds": 162,
+      "text": "那就是性水废需这张地图"
+    },
+    {
+      "start_seconds": 162,
+      "end_seconds": 164,
+      "text": "这张图会在4月中旬的版本重新上线"
+    },
+    {
+      "start_seconds": 164,
+      "end_seconds": 165,
+      "text": "大伙如果想重新体验的话"
+    },
+    {
+      "start_seconds": 165,
+      "end_seconds": 167,
+      "text": "可以在那时候上号玩一玩"
+    },
+    {
+      "start_seconds": 167,
+      "end_seconds": 169,
+      "text": "下个本期列是平常在明天更新"
+    },
+    {
+      "start_seconds": 169,
+      "end_seconds": 170,
+      "text": "喜欢的话也可以关注到时候来看"
+    },
+    {
+      "start_seconds": 170,
+      "end_seconds": 172,
+      "text": "我们下期再见,拜拜!"
+    }
+  ]
+}

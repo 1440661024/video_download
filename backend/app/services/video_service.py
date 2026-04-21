@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import base64
+import copy
 import json
 import re
 import shutil
@@ -8,8 +9,9 @@ import uuid
 from collections import defaultdict
 from hashlib import sha256
 from pathlib import Path
+from threading import Lock
 from typing import Any
-from urllib.parse import parse_qs, urlparse
+from urllib.parse import parse_qs, urlparse, urlunparse
 
 import httpx
 from yt_dlp import DownloadError, YoutubeDL
@@ -170,10 +172,12 @@ class DouyinResolver:
             source_url=url,
             title=resolved["title"],
             thumbnail=resolved["thumbnail"],
+            description="",
             duration_seconds=resolved["duration_seconds"],
             duration_human=format_duration(resolved["duration_seconds"]),
             uploader=resolved["uploader"],
             extractor="Douyin",
+            view_count=resolved["view_count"],
             webpage_url=resolved["webpage_url"],
             can_use_direct_link=False,
             recommended_strategy=strategy,
@@ -279,6 +283,7 @@ class DouyinResolver:
                 "thumbnail": self._select_thumbnail(item_info),
                 "duration_seconds": self._normalize_douyin_duration((item_info.get("video") or {}).get("duration")),
                 "uploader": (item_info.get("author") or {}).get("nickname"),
+                "view_count": self._coerce_int((item_info.get("statistics") or {}).get("play_count")),
                 "webpage_url": resolved_url,
                 "download_url": download_url,
                 "resolution": f"{width or '?'}x{height or '?'}",
@@ -494,6 +499,9 @@ class DouyinResolver:
 
 
 class VideoService:
+    _info_cache: dict[str, dict[str, Any]] = {}
+    _info_cache_lock = Lock()
+
     def __init__(self) -> None:
         self.base_opts = {
             "quiet": True,
@@ -510,9 +518,33 @@ class VideoService:
         }
         return YoutubeDL(opts)
 
+    def _normalize_source_url(self, url: str) -> str:
+        parsed = urlparse(url.strip())
+        hostname = (parsed.hostname or "").lower()
+        if hostname == "bilibili.com" and parsed.path.startswith("/video/"):
+            normalized_path = parsed.path if parsed.path.endswith("/") else f"{parsed.path}/"
+            return urlunparse(
+                (
+                    parsed.scheme or "https",
+                    "www.bilibili.com",
+                    normalized_path,
+                    parsed.params,
+                    parsed.query,
+                    parsed.fragment,
+                )
+            )
+        return url.strip()
+
     def extract_info(self, url: str) -> dict[str, Any]:
+        url = self._normalize_source_url(url)
+        cached_info = self._load_cached_info(url)
+        if cached_info is not None:
+            return cached_info
+
         if self.douyin.supports(url):
-            return self.douyin.extract_summary_info(url)
+            info = self.douyin.extract_summary_info(url)
+            self._save_cached_info(url, info)
+            return copy.deepcopy(info)
         try:
             with self._ydl() as ydl:
                 info = ydl.extract_info(url, download=False)
@@ -535,10 +567,24 @@ class VideoService:
                 raise VideoServiceError(
                     code="EMPTY_PLAYLIST",
                     message="当前链接未返回可下载的视频条目。",
-                )
+            )
             info = first_entry
 
-        return info
+        self._save_cached_info(url, info)
+        return copy.deepcopy(info)
+
+    def _load_cached_info(self, url: str) -> dict[str, Any] | None:
+        with self._info_cache_lock:
+            cached = self._info_cache.get(url)
+            return copy.deepcopy(cached) if cached is not None else None
+
+    def _save_cached_info(self, url: str, info: dict[str, Any]) -> None:
+        with self._info_cache_lock:
+            # Keep the cache very small and simple: just the most recent parse results.
+            if len(self._info_cache) >= 32 and url not in self._info_cache:
+                oldest_key = next(iter(self._info_cache))
+                self._info_cache.pop(oldest_key, None)
+            self._info_cache[url] = copy.deepcopy(info)
 
     def build_strategy(self, format_info: dict[str, Any] | None) -> DownloadStrategy:
         if not format_info:
@@ -647,6 +693,7 @@ class VideoService:
         return options
 
     def parse_video(self, url: str) -> VideoMeta:
+        url = self._normalize_source_url(url)
         if self.douyin.supports(url):
             return self.douyin.parse_video(url)
 
@@ -662,10 +709,12 @@ class VideoService:
             source_url=url,
             title=info.get("title") or "未命名视频",
             thumbnail=info.get("thumbnail"),
+            description=str(info.get("description") or "").strip() or None,
             duration_seconds=duration_seconds,
             duration_human=format_duration(duration_seconds),
             uploader=info.get("uploader") or info.get("channel"),
             extractor=info.get("extractor_key") or info.get("extractor"),
+            view_count=normalize_filesize(info.get("view_count")),
             webpage_url=info.get("webpage_url"),
             can_use_direct_link=any(fmt.has_direct_url for fmt in formats),
             recommended_strategy=strategy,
@@ -674,6 +723,7 @@ class VideoService:
         )
 
     def resolve_format(self, url: str, format_id: str) -> tuple[dict[str, Any], dict[str, Any]]:
+        url = self._normalize_source_url(url)
         info = self.extract_info(url)
         if "+" in format_id:
             video_id, audio_id = format_id.split("+", 1)
@@ -694,6 +744,7 @@ class VideoService:
         return info, format_info
 
     def get_direct_link(self, url: str, format_id: str) -> dict[str, Any]:
+        url = self._normalize_source_url(url)
         if self.douyin.supports(url):
             return self.douyin.get_direct_link(url, format_id)
 
@@ -719,6 +770,7 @@ class VideoService:
         return format_id
 
     def download_to_temp(self, url: str, format_id: str) -> tuple[Path, str]:
+        url = self._normalize_source_url(url)
         if self.douyin.supports(url):
             return self.douyin.download_to_temp(url, format_id)
 

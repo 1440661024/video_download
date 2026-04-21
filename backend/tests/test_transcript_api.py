@@ -1,14 +1,8 @@
-from fastapi.testclient import TestClient
-
-from app.main import app
 from app.routers import summary_stream
 from app.schemas_summary import VideoSummarySourceStatus
 
 
-client = TestClient(app)
-
-
-def test_transcript_success(monkeypatch):
+def test_transcript_success(monkeypatch, member_client):
     monkeypatch.setattr(
         summary_stream.document_summary_service,
         "get_transcript",
@@ -33,7 +27,7 @@ def test_transcript_success(monkeypatch):
         },
     )
 
-    response = client.get("/api/transcript", params={"video_url": "https://example.com/video"})
+    response = member_client.get("/api/transcript", params={"video_url": "https://example.com/video"})
     assert response.status_code == 200
     payload = response.json()
     assert payload["transcript"] == "[0:00] demo transcript"

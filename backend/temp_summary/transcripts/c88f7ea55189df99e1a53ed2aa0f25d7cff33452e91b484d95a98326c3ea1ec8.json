@@ -1,0 +1,27 @@
+{
+  "source_type": "speech_to_text",
+  "language": "zh",
+  "fallback_used": true,
+  "segments": [
+    {
+      "start_seconds": 0,
+      "end_seconds": 12,
+      "text": "对你讲 你讲 还要记得"
+    },
+    {
+      "start_seconds": 12,
+      "end_seconds": 16,
+      "text": "轻轻贴近你的耳朵"
+    },
+    {
+      "start_seconds": 16,
+      "end_seconds": 20,
+      "text": "Sarangheyo 情话永远不嫌太多"
+    },
+    {
+      "start_seconds": 20,
+      "end_seconds": 22,
+      "text": "对你说"
+    }
+  ]
+}

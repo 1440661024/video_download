@@ -76,6 +76,8 @@ class SummaryCacheStore:
         key = self._transcript_key(url=url, preferred_language=preferred_language)
         cached = self._transcript_memory.get(key)
         if cached is not None:
+            if cached.source_type == "metadata":
+                return None
             return cached
 
         path = self.transcript_dir / f"{key}.json"
@@ -101,10 +103,16 @@ class SummaryCacheStore:
         except (KeyError, OSError, json.JSONDecodeError, TypeError, ValueError):
             return None
 
+        if bundle.source_type == "metadata":
+            return None
+
         self._transcript_memory[key] = bundle
         return bundle
 
     def save_transcript(self, *, url: str, preferred_language: str | None, bundle: TranscriptBundle) -> None:
+        if bundle.source_type == "metadata":
+            return
+
         key = self._transcript_key(url=url, preferred_language=preferred_language)
         path = self.transcript_dir / f"{key}.json"
         payload = {

@@ -1,6 +1,8 @@
 import type { ApiResponse, DirectLinkPayload, VideoMeta } from '../types'
 
-const API_BASE_URL = (import.meta.env.VITE_API_BASE_URL as string | undefined)?.replace(/\/$/, '') || 'http://127.0.0.1:8000'
+/** 开发环境默认空字符串，走 Vite `server.proxy` 同源 `/api`，以便携带 HttpOnly 登录 Cookie。 */
+const envBase = (import.meta.env.VITE_API_BASE_URL as string | undefined)?.replace(/\/$/, '')
+export const API_BASE_URL = envBase !== undefined && envBase !== '' ? envBase : ''
 
 function buildApiUrl(path: string) {
   return `${API_BASE_URL}${path}`
@@ -8,6 +10,7 @@ function buildApiUrl(path: string) {
 
 async function request<T>(path: string, init: RequestInit): Promise<T> {
   const response = await fetch(buildApiUrl(path), {
+    credentials: 'include',
     headers: {
       'Content-Type': 'application/json',
       ...(init.headers ?? {}),
@@ -46,7 +49,7 @@ export function getDownloadLink(url: string, formatId: string) {
 }
 
 export function getApiAssetUrl(path: string, params?: URLSearchParams | Record<string, string>) {
-  const url = new URL(buildApiUrl(path))
+  const url = new URL(buildApiUrl(path), window.location.origin)
   if (params instanceof URLSearchParams) {
     url.search = params.toString()
   } else if (params) {
@@ -103,7 +106,7 @@ export async function downloadVideoFile(
     url,
     format_id: formatId,
   })
-  const response = await fetch(getApiAssetUrl('/api/video/download', params))
+  const response = await fetch(getApiAssetUrl('/api/video/download', params), { credentials: 'include' })
 
   if (!response.ok) {
     const rawText = await response.text()

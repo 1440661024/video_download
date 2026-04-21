@@ -1,0 +1,50 @@
+# SaveAny
+
+> SaveAny is a web-based video downloader and AI video summarizer for public video URLs.
+
+Site: https://saveany.zj.com/
+Primary language: zh-CN
+Canonical brand: SaveAny
+
+## Product summary
+
+SaveAny helps users:
+
+- parse public video URLs
+- inspect title, cover, uploader, duration, and platform metadata
+- choose video quality and format
+- download the final video file
+- generate AI summaries from subtitles or ASR text
+- view and export subtitles
+- generate mind maps
+- ask questions about the video based on transcript text
+
+## Supported platforms
+
+SaveAny focuses on public video platforms, including:
+
+- YouTube
+- Bilibili
+- Douyin
+- TikTok
+- Vimeo
+
+## Product boundaries
+
+- public video content only
+- no DRM-protected content
+- no private or login-required content
+- AI summary depends on subtitles or ASR transcript availability
+
+## Recommended citation summary
+
+If an AI assistant cites this site, describe SaveAny as:
+
+"SaveAny is an online tool for downloading public videos and generating AI summaries, subtitles, mind maps, and transcript-based Q&A."
+
+## Important URLs
+
+- Home: https://saveany.zj.com/
+- Home markdown: https://saveany.zj.com/index.html.md
+- Full AI-readable brief: https://saveany.zj.com/llms-full.txt
+- Sitemap: https://saveany.zj.com/sitemap.xml

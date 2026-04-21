@@ -17,6 +17,7 @@ type PositionedNode = {
   color: string
   parentId: string | null
   lines: string[]
+  nodeType: 'root' | 'branch' | 'leaf' | 'highlight' | 'conclusion'
 }
 
 type ViewState = {
@@ -31,21 +32,66 @@ type LayoutResult = {
   height: number
 }
 
-const BRANCH_COLORS = ['#2563eb', '#f97316', '#10b981', '#0ea5e9', '#8b5cf6', '#ef4444', '#14b8a6']
-const ROOT_WIDTH = 240
-const MAX_NODE_WIDTH = 240
-const MIN_NODE_WIDTH = 136
+const BRANCH_COLORS = ['#3b82f6', '#14b8a6', '#6366f1', '#0ea5e9', '#64748b', '#22c55e', '#8b5cf6']
+const ROOT_WIDTH = 336
+const MAX_NODE_WIDTH = 250
+const MIN_NODE_WIDTH = 148
 const COLUMN_GAP = 220
-const ROW_GAP = 28
-const NODE_HEIGHT_BASE = 58
-const NODE_LINE_HEIGHT = 20
-const ROOT_NODE_HEIGHT_BASE = 84
-const ROOT_NODE_LINE_HEIGHT = 28
+const ROW_GAP = 30
+const NODE_HEIGHT_BASE = 54
+const NODE_LINE_HEIGHT = 22
+const ROOT_NODE_HEIGHT_BASE = 96
+const ROOT_NODE_LINE_HEIGHT = 32
 const PADDING_X = 100
 const PADDING_Y = 80
+const MAX_LINES_PER_NODE = 2
 
 function t(value: string) {
   return value
+}
+
+function detectNodeType(title: string, depth: number): PositionedNode['nodeType'] {
+  if (depth === 0) {
+    return 'root'
+  }
+  const normalized = title.replaceAll(/\s+/g, '')
+  if (
+    normalized.includes('结论') ||
+    normalized.includes('总结') ||
+    normalized.includes('启发') ||
+    normalized.includes('收获')
+  ) {
+    return 'conclusion'
+  }
+  if (
+    normalized.includes('关键') ||
+    normalized.includes('重点') ||
+    normalized.includes('核心') ||
+    normalized.includes('⭐') ||
+    normalized.includes('★')
+  ) {
+    return 'highlight'
+  }
+  return depth === 1 ? 'branch' : 'leaf'
+}
+
+function splitLongTextToChildren(title: string) {
+  const clean = title.replace(/\s+/g, ' ').trim()
+  if (clean.length <= 22) {
+    return null
+  }
+
+  const separators = /[；;。！？!?]/g
+  const parts = clean
+    .split(separators)
+    .map((item) => item.replace(/^[、,，.\-\s]+|[、,，.\-\s]+$/g, '').trim())
+    .filter(Boolean)
+
+  if (parts.length >= 2) {
+    return parts.map((part) => ({ title: part, children: [] as MindmapNode[] }))
+  }
+
+  return null
 }
 
 function normalizeNode(input: unknown): MindmapNode | null {
@@ -73,7 +119,8 @@ function normalizeNode(input: unknown): MindmapNode | null {
     return null
   }
 
-  return { title, children }
+  const autoSplitChildren = !children.length ? splitLongTextToChildren(title) : null
+  return { title, children: autoSplitChildren ?? children }
 }
 
 function parseMindmap(rawMindmap: string): MindmapNode | null {
@@ -101,22 +148,27 @@ function countLeaves(node: MindmapNode): number {
 
 function wrapText(title: string, depth: number) {
   const clean = title.replace(/\s+/g, ' ').trim()
-  const charsPerLine = depth === 0 ? 8 : 12
+  const charsPerLine = depth === 0 ? 10 : depth === 1 ? 14 : 16
   const lines: string[] = []
   for (let index = 0; index < clean.length; index += charsPerLine) {
     lines.push(clean.slice(index, index + charsPerLine))
   }
-  return lines.length ? lines : ['']
+  const limitedLines = lines.length ? lines.slice(0, MAX_LINES_PER_NODE) : ['']
+  if (lines.length > MAX_LINES_PER_NODE) {
+    const lastIndex = limitedLines.length - 1
+    limitedLines[lastIndex] = `${limitedLines[lastIndex].slice(0, Math.max(0, limitedLines[lastIndex].length - 1))}…`
+  }
+  return limitedLines
 }
 
-function estimateNodeSize(lines: string[], depth: number) {
+function estimateNodeSize(lines: string[], depth: number, nodeType: PositionedNode['nodeType']) {
   const longestLine = Math.max(...lines.map((line) => line.length), 1)
   const width = Math.max(
     depth === 0 ? ROOT_WIDTH : MIN_NODE_WIDTH,
     Math.min(MAX_NODE_WIDTH, longestLine * (depth === 0 ? 18 : 14) + 44),
   )
   const lineHeight = depth === 0 ? ROOT_NODE_LINE_HEIGHT : NODE_LINE_HEIGHT
-  const baseHeight = depth === 0 ? ROOT_NODE_HEIGHT_BASE : NODE_HEIGHT_BASE
+  const baseHeight = depth === 0 ? ROOT_NODE_HEIGHT_BASE : nodeType === 'conclusion' ? NODE_HEIGHT_BASE + 10 : NODE_HEIGHT_BASE
   const height = baseHeight + Math.max(0, lines.length - 1) * lineHeight
   return { width, height }
 }
@@ -132,8 +184,9 @@ function layoutMindmap(root: MindmapNode): LayoutResult {
 
   function visit(node: MindmapNode, currentDepth: number, parentId: string | null, color: string): number {
     const id = `node-${sequence++}`
+    const nodeType = detectNodeType(node.title, currentDepth)
     const lines = wrapText(node.title, currentDepth)
-    const size = estimateNodeSize(lines, currentDepth)
+    const size = estimateNodeSize(lines, currentDepth, nodeType)
     const x = PADDING_X + currentDepth * COLUMN_GAP
     let y: number
 
@@ -163,6 +216,7 @@ function layoutMindmap(root: MindmapNode): LayoutResult {
       color,
       parentId,
       lines,
+      nodeType,
     })
 
     return y
@@ -216,14 +270,27 @@ function svgMarkup(layout: LayoutResult, nodeMap: Map<string, PositionedNode>) {
           if (!parent) {
             return ''
           }
-          return `<path d="${buildCurvePath(parent, node)}" fill="none" stroke="${node.color}" stroke-width="${node.depth <= 1 ? 4 : 2.8}" stroke-linecap="round" opacity="0.9" />`
+          return `<path d="${buildCurvePath(parent, node)}" fill="none" stroke="${node.color}" stroke-width="1" stroke-linecap="round" opacity="0.45" />`
         })
         .join('')}
       ${layout.nodes
         .map((node) => {
-          const textColor = node.depth === 0 ? '#ffffff' : '#0f172a'
-          const rectFill = node.depth === 0 ? '#0f172a' : '#ffffff'
-          const rectStroke = node.depth === 0 ? '#0f172a' : '#dbeafe'
+          const textColor =
+            node.nodeType === 'root' ? '#ffffff' : node.nodeType === 'leaf' ? '#475569' : '#0f172a'
+          const rectFill =
+            node.nodeType === 'root'
+              ? '#0f172a'
+              : node.nodeType === 'conclusion'
+                ? '#fff8db'
+                : node.nodeType === 'highlight'
+                  ? '#f8fafc'
+                  : '#ffffff'
+          const rectStroke =
+            node.nodeType === 'root'
+              ? '#0f172a'
+              : node.nodeType === 'conclusion'
+                ? '#facc15'
+                : '#e5e7eb'
           const textX = node.depth === 0 ? node.width / 2 : 24
           const textAnchor = node.depth === 0 ? 'middle' : 'start'
           const currentLineHeight = node.depth === 0 ? ROOT_NODE_LINE_HEIGHT : NODE_LINE_HEIGHT
@@ -240,10 +307,15 @@ function svgMarkup(layout: LayoutResult, nodeMap: Map<string, PositionedNode>) {
 
           return `
             <g transform="translate(${node.x}, ${node.y})" filter="url(#mindmap-shadow-export)">
-              <rect width="${node.width}" height="${node.height}" rx="${node.depth === 0 ? 24 : 20}" fill="${rectFill}" stroke="${rectStroke}" stroke-width="${node.depth === 0 ? 0 : 1.5}" />
+              <rect width="${node.width}" height="${node.height}" rx="${node.depth === 0 ? 28 : 18}" fill="${rectFill}" stroke="${rectStroke}" stroke-width="${node.depth === 0 ? 0 : 1}" />
               ${
                 node.depth !== 0
                   ? `<rect x="0" y="0" width="6" height="${node.height}" rx="6" fill="${node.color}" />`
+                  : ''
+              }
+              ${
+                node.nodeType === 'highlight'
+                  ? `<text x="${node.width - 20}" y="22" text-anchor="middle" font-size="14" font-weight="700" fill="#f59e0b">★</text>`
                   : ''
               }
               <text x="${textX}" y="${textY}" text-anchor="${textAnchor}" font-size="${node.depth === 0 ? 22 : node.depth === 1 ? 16 : 14}" font-weight="${node.depth <= 1 ? 700 : 600}" fill="${textColor}" font-family="Segoe UI, PingFang SC, Microsoft YaHei, sans-serif">
@@ -281,6 +353,7 @@ export function MindmapCanvas({ rawMindmap }: { rawMindmap: string }) {
   const [containerSize, setContainerSize] = useState({ width: 0, height: 0 })
   const [view, setView] = useState<ViewState>({ scale: 1, x: 0, y: 0 })
   const [isFullscreen, setIsFullscreen] = useState(false)
+  const [hoveredNodeId, setHoveredNodeId] = useState<string | null>(null)
 
   const layout = useMemo(() => {
     const root = parseMindmap(rawMindmap)
@@ -495,7 +568,7 @@ export function MindmapCanvas({ rawMindmap }: { rawMindmap: string }) {
         <svg ref={svgRef} className="absolute inset-0 h-full w-full select-none" style={{ userSelect: 'none' }}>
           <defs>
             <filter id="mindmap-shadow" x="-20%" y="-20%" width="140%" height="140%">
-              <feDropShadow dx="0" dy="10" stdDeviation="18" floodColor="#cbd5e1" floodOpacity="0.38" />
+              <feDropShadow dx="0" dy="8" stdDeviation="10" floodColor="#94a3b8" floodOpacity="0.16" />
             </filter>
           </defs>
 
@@ -514,9 +587,9 @@ export function MindmapCanvas({ rawMindmap }: { rawMindmap: string }) {
                   d={buildCurvePath(parent, node)}
                   fill="none"
                   stroke={node.color}
-                  strokeWidth={node.depth <= 1 ? 4 : 2.8}
+                  strokeWidth={1}
                   strokeLinecap="round"
-                  opacity={0.9}
+                  opacity={0.48}
                 />
               )
             })}
@@ -527,17 +600,40 @@ export function MindmapCanvas({ rawMindmap }: { rawMindmap: string }) {
                 transform={`translate(${node.x}, ${node.y})`}
                 filter="url(#mindmap-shadow)"
                 style={{ userSelect: 'none' }}
+                onMouseEnter={() => setHoveredNodeId(node.id)}
+                onMouseLeave={() => setHoveredNodeId((current) => (current === node.id ? null : current))}
               >
                 <rect
                   width={node.width}
                   height={node.height}
-                  rx={node.depth === 0 ? 24 : 20}
-                  fill={node.depth === 0 ? '#0f172a' : '#ffffff'}
-                  stroke={node.depth === 0 ? '#0f172a' : '#dbeafe'}
-                  strokeWidth={node.depth === 0 ? 0 : 1.5}
+                  rx={node.depth === 0 ? 28 : 18}
+                  fill={
+                    node.nodeType === 'root'
+                      ? '#0f172a'
+                      : node.nodeType === 'conclusion'
+                        ? '#fff8db'
+                        : node.nodeType === 'highlight'
+                          ? '#f8fafc'
+                          : '#ffffff'
+                  }
+                  stroke={
+                    hoveredNodeId === node.id
+                      ? '#93c5fd'
+                      : node.nodeType === 'root'
+                      ? '#0f172a'
+                      : node.nodeType === 'conclusion'
+                        ? '#facc15'
+                        : '#e5e7eb'
+                  }
+                  strokeWidth={node.depth === 0 ? 0 : hoveredNodeId === node.id ? 1.4 : 1}
                 />
                 {node.depth !== 0 ? (
-                  <rect x="0" y="0" width="6" height={node.height} rx="6" fill={node.color} />
+                  <rect x="0" y="0" width="4" height={node.height} rx="4" fill={node.color} opacity={node.depth === 1 ? 0.9 : 0.45} />
+                ) : null}
+                {node.nodeType === 'highlight' ? (
+                  <text x={node.width - 20} y={22} textAnchor="middle" fontSize={14} fontWeight={700} fill="#f59e0b">
+                    ★
+                  </text>
                 ) : null}
                 <text
                   x={node.depth === 0 ? node.width / 2 : 24}
@@ -548,9 +644,11 @@ export function MindmapCanvas({ rawMindmap }: { rawMindmap: string }) {
                       : 28
                   }
                   textAnchor={node.depth === 0 ? 'middle' : 'start'}
-                  fontSize={node.depth === 0 ? 22 : node.depth === 1 ? 16 : 14}
-                  fontWeight={node.depth <= 1 ? 700 : 600}
-                  fill={node.depth === 0 ? '#ffffff' : '#0f172a'}
+                  fontSize={node.depth === 0 ? 24 : node.depth === 1 ? 16 : 14}
+                  fontWeight={node.depth <= 1 ? 700 : 500}
+                  fill={
+                    node.nodeType === 'root' ? '#ffffff' : node.nodeType === 'leaf' ? '#475569' : '#0f172a'
+                  }
                   style={{ userSelect: 'none', pointerEvents: 'none' }}
                 >
                   {node.lines.map((line, index) => (
@@ -558,6 +656,7 @@ export function MindmapCanvas({ rawMindmap }: { rawMindmap: string }) {
                       key={`${node.id}-${index}`}
                       x={node.depth === 0 ? node.width / 2 : 24}
                       dy={index === 0 ? 0 : node.depth === 0 ? ROOT_NODE_LINE_HEIGHT : NODE_LINE_HEIGHT}
+                      style={{ dominantBaseline: 'hanging' }}
                     >
                       {line}
                     </tspan>

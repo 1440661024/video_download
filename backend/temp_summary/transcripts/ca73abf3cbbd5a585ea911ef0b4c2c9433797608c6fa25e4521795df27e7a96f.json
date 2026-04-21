@@ -1,0 +1,37 @@
+{
+  "source_type": "human_subtitles",
+  "language": "en",
+  "fallback_used": false,
+  "segments": [
+    {
+      "start_seconds": 1,
+      "end_seconds": 3,
+      "text": "All right, so here we are, in front of the\nelephants"
+    },
+    {
+      "start_seconds": 5,
+      "end_seconds": 8,
+      "text": "the cool thing about these guys is that they\nhave really..."
+    },
+    {
+      "start_seconds": 8,
+      "end_seconds": 13,
+      "text": "really really long trunks"
+    },
+    {
+      "start_seconds": 13,
+      "end_seconds": 14,
+      "text": "and that's cool"
+    },
+    {
+      "start_seconds": 14,
+      "end_seconds": 16,
+      "text": "(baaaaaaaaaaahhh!!)"
+    },
+    {
+      "start_seconds": 17,
+      "end_seconds": 19,
+      "text": "and that's pretty much all there is to\nsay"
+    }
+  ]
+}

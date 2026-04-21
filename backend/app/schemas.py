@@ -1,6 +1,6 @@
 from typing import Any, Literal
 
-from pydantic import BaseModel, Field, HttpUrl
+from pydantic import BaseModel, EmailStr, Field, HttpUrl
 
 
 class ApiError(BaseModel):
@@ -52,10 +52,12 @@ class VideoMeta(BaseModel):
     source_url: HttpUrl
     title: str
     thumbnail: str | None = None
+    description: str | None = None
     duration_seconds: int | None = None
     duration_human: str
     uploader: str | None = None
     extractor: str | None = None
+    view_count: int | None = None
     webpage_url: str | None = None
     can_use_direct_link: bool
     recommended_strategy: DownloadStrategy
@@ -68,3 +70,21 @@ class DirectLinkPayload(BaseModel):
     strategy: DownloadStrategy
     expires_hint: str | None = None
     warning: str | None = None
+
+
+class RegisterRequest(BaseModel):
+    email: EmailStr
+    password: str = Field(min_length=8, max_length=128)
+
+
+class LoginRequest(BaseModel):
+    email: EmailStr
+    password: str = Field(min_length=1, max_length=128)
+
+
+class UserPublic(BaseModel):
+    id: int
+    email: str
+    is_ai_member: bool
+    ai_membership_until: str | None = None
+    free_ai_summaries_remaining_today: int = 0

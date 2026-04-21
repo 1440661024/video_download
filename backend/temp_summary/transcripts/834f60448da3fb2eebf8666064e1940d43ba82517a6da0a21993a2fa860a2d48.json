@@ -1,0 +1,132 @@
+{
+  "source_type": "speech_to_text",
+  "language": "zh",
+  "fallback_used": true,
+  "segments": [
+    {
+      "start_seconds": 0,
+      "end_seconds": 1,
+      "text": "作为初三的学长"
+    },
+    {
+      "start_seconds": 1,
+      "end_seconds": 3,
+      "text": "我真的是第一次体会到孤独空虚的感觉"
+    },
+    {
+      "start_seconds": 3,
+      "end_seconds": 5,
+      "text": "前段时间我们班音乐客组织唱歌比赛"
+    },
+    {
+      "start_seconds": 5,
+      "end_seconds": 6,
+      "text": "为了这次比赛"
+    },
+    {
+      "start_seconds": 6,
+      "end_seconds": 7,
+      "text": "我专门唱了自己最拿手的剧的烟花艺冷"
+    },
+    {
+      "start_seconds": 7,
+      "end_seconds": 9,
+      "text": "结果唱完后全班都安安静静的"
+    },
+    {
+      "start_seconds": 9,
+      "end_seconds": 11,
+      "text": "没有一个人知道我唱的是什么"
+    },
+    {
+      "start_seconds": 11,
+      "end_seconds": 12,
+      "text": "反而另一个人上来唱了一首今天"
+    },
+    {
+      "start_seconds": 12,
+      "end_seconds": 14,
+      "text": "唱完后全班都在热烈鼓掌"
+    },
+    {
+      "start_seconds": 14,
+      "end_seconds": 16,
+      "text": "关键是这个人根本就不听见"
+    },
+    {
+      "start_seconds": 16,
+      "end_seconds": 17,
+      "text": "只是单纯跟风而已"
+    },
+    {
+      "start_seconds": 17,
+      "end_seconds": 19,
+      "text": "我作为一个剧的老粉是真的受不了"
+    },
+    {
+      "start_seconds": 19,
+      "end_seconds": 20,
+      "text": "为了防止有人说我也是跟风"
+    },
+    {
+      "start_seconds": 20,
+      "end_seconds": 21,
+      "text": "所以我先发独自证"
+    },
+    {
+      "start_seconds": 23,
+      "end_seconds": 25,
+      "text": "凭什么这种跟风的人能得到掌声"
+    },
+    {
+      "start_seconds": 25,
+      "end_seconds": 27,
+      "text": "我初中计小唱了两年级的歌"
+    },
+    {
+      "start_seconds": 27,
+      "end_seconds": 28,
+      "text": "我的唱功全班都有目共睹"
+    },
+    {
+      "start_seconds": 28,
+      "end_seconds": 30,
+      "text": "论唱功他绝对赢不了我"
+    },
+    {
+      "start_seconds": 30,
+      "end_seconds": 31,
+      "text": "可为什么他还是赢了"
+    },
+    {
+      "start_seconds": 31,
+      "end_seconds": 32,
+      "text": "就因为他唱了一首热门歌"
+    },
+    {
+      "start_seconds": 32,
+      "end_seconds": 33,
+      "text": "而我唱的是冷门歌吗"
+    },
+    {
+      "start_seconds": 33,
+      "end_seconds": 35,
+      "text": "我真的是感到非常无礼"
+    },
+    {
+      "start_seconds": 35,
+      "end_seconds": 36,
+      "text": "因为这件事还被吐槽是小众歌"
+    },
+    {
+      "start_seconds": 36,
+      "end_seconds": 37,
+      "text": "难道热爱也有错"
+    },
+    {
+      "start_seconds": 37,
+      "end_seconds": 39,
+      "text": "听的歌冷门也有错吗"
+    }
+  ]
+}

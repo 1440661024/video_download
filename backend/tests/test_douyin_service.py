@@ -1,4 +1,4 @@
-from app.services.video_service import DouyinResolver
+from app.services.video_service import DouyinResolver, VideoService
 
 
 def test_extract_video_id_from_share_path():
@@ -28,3 +28,9 @@ def test_select_download_url_removes_watermark_marker():
     )
     assert "playwm" not in download_url
     assert "play/?" in download_url
+
+
+def test_normalize_bilibili_video_url_adds_www_and_trailing_slash():
+    service = VideoService()
+    normalized = service._normalize_source_url("https://bilibili.com/video/BV1mAAmzqEfP")
+    assert normalized == "https://www.bilibili.com/video/BV1mAAmzqEfP/"

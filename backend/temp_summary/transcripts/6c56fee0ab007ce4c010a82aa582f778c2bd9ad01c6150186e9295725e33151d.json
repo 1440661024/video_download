@@ -76,7 +76,7 @@
     {
       "start_seconds": 27,
       "end_seconds": 29,
-      "text": "自有选择要翻译哪些文档"
+      "text": "自由选择要翻译哪些文档"
     },
     {
       "start_seconds": 29,
@@ -186,7 +186,7 @@
     {
       "start_seconds": 74,
       "end_seconds": 76,
-      "text": "GPT、Cloud、Germany、Deepset"
+      "text": "GPT,Cloud,Germany,Deepset"
     },
     {
       "start_seconds": 76,
@@ -216,52 +216,62 @@
     {
       "start_seconds": 86,
       "end_seconds": 89,
-      "text": "我主要用的是Cursor這款AI編程工具"
+      "text": "我主要用的是Cursor这款AI编程工具"
     },
     {
       "start_seconds": 89,
       "end_seconds": 91,
-      "text": "搭配了FairTrial MCP聯網搜索"
+      "text": "搭配了FairCrow MCP联网搜索"
     },
     {
       "start_seconds": 91,
+      "end_seconds": 93,
+      "text": "Countex 7或许最新技术文档"
+    },
+    {
+      "start_seconds": 93,
       "end_seconds": 95,
-      "text": "Countex 7獲取最新技術文檔這兩者MCP的擴展"
+      "text": "这两者MCP的扩展"
     },
     {
       "start_seconds": 95,
       "end_seconds": 97,
-      "text": "前段頁面還用了UIUX ProMatch"
+      "text": "前段页面还用了UIUX ProMatch"
     },
     {
       "start_seconds": 97,
-      "end_seconds": 101,
-      "text": "這個Agent Studios來生成正經美的UI"
+      "end_seconds": 100,
+      "text": "这个Agent Studios来生成正经美的UI"
     },
     {
-      "start_seconds": 101,
+      "start_seconds": 100,
       "end_seconds": 104,
-      "text": "遵循現在最主流的AI應用開發流程"
+      "text": "遵循现在最主流的AI应用开发流程"
     },
     {
       "start_seconds": 104,
       "end_seconds": 107,
-      "text": "第一步 給AI寫一段需求調研的提示詞"
+      "text": "第一步 给AI写一段需求调研的提示词"
     },
     {
       "start_seconds": 107,
+      "end_seconds": 109,
+      "text": "让它联网搜索竞品"
+    },
+    {
+      "start_seconds": 109,
       "end_seconds": 110,
-      "text": "讓它聯網搜索競品分析差異化機會"
+      "text": "分析差异化机会"
     },
     {
       "start_seconds": 110,
       "end_seconds": 112,
-      "text": "最後生成需求規則文檔"
+      "text": "最后生成需求规则文档"
     },
     {
       "start_seconds": 112,
       "end_seconds": 115,
-      "text": "第二步 讓AI設計技術方案"
+      "text": "第二步 让AI设计技术方案"
     },
     {
       "start_seconds": 115,
@@ -326,7 +336,7 @@
     {
       "start_seconds": 138,
       "end_seconds": 141,
-      "text": "建议每做完一阵阶段都用Gate提交代码"
+      "text": "建议每做完一阵阵都用Gate提交代码"
     },
     {
       "start_seconds": 141,
@@ -336,7 +346,7 @@
     {
       "start_seconds": 144,
       "end_seconds": 147,
-      "text": "为了防止上下文过多导致AI断片和浪费totence"
+      "text": "为了防止上下文过多导致AI断片和浪费Totence"
     },
     {
       "start_seconds": 147,
@@ -381,7 +391,7 @@
     {
       "start_seconds": 168,
       "end_seconds": 170,
-      "text": "项目代码我已经开源到了data部"
+      "text": "项目代码我已经开源到了DataBu"
     },
     {
       "start_seconds": 170,
@@ -396,7 +406,7 @@
     {
       "start_seconds": 175,
       "end_seconds": 177,
-      "text": "也都放到了我的编程导航里"
+      "text": "也都放到了我的编程导行里"
     },
     {
       "start_seconds": 177,
@@ -406,22 +416,22 @@
     {
       "start_seconds": 180,
       "end_seconds": 182,
-      "text": "以及data为APP安全授权"
+      "text": "以及TATA为PP安全授权"
     },
     {
       "start_seconds": 182,
       "end_seconds": 184,
-      "text": "webhook自动触发增量翻译"
+      "text": "WebHook自动触发增量翻译"
     },
     {
       "start_seconds": 184,
       "end_seconds": 186,
-      "text": "nbrout内网穿透调试"
+      "text": "NBRAWNNN网穿透调适"
     },
     {
       "start_seconds": 186,
       "end_seconds": 189,
-      "text": "wassail一键部署上线等实战技术"
+      "text": "Wassail一键部署上线等实战技术"
     },
     {
       "start_seconds": 189,
@@ -436,7 +446,7 @@
     {
       "start_seconds": 193,
       "end_seconds": 195,
-      "text": "也可以看看我免费差缘的"
+      "text": "也可以看看我免费开源的"
     },
     {
       "start_seconds": 195,
@@ -461,7 +471,7 @@
     {
       "start_seconds": 205,
       "end_seconds": 206,
-      "text": "我是鱼皮"
+      "text": "我是余皮"
     },
     {
       "start_seconds": 206,

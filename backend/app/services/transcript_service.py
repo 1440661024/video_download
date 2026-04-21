@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+import logging
 import re
 import xml.etree.ElementTree as ET
 from typing import Any
@@ -8,10 +9,13 @@ from urllib.parse import urlparse
 
 import httpx
 
-from app.services.asr_service import AudioTranscriptionService
+from app.services.asr_service import AsrTranscriptionError, AudioTranscriptionService
 from app.services.summary_cache import SummaryCacheStore
 from app.services.text_normalizer import normalize_text
 from app.services.transcript_models import TranscriptBundle, TranscriptSegment
+
+
+logger = logging.getLogger(__name__)
 
 
 class TranscriptService:
@@ -171,8 +175,9 @@ class TranscriptService:
     def _build_from_asr(self, source_url: str, preferred_language: str | None) -> TranscriptBundle | None:
         try:
             segments_payload, detected_language = self.asr_service.transcribe_url(source_url, preferred_language)
-        except Exception:
-            return None
+        except AsrTranscriptionError:
+            logger.exception("ASR fallback failed for source_url=%s", source_url)
+            raise
 
         segments = [
             TranscriptSegment(

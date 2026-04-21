@@ -24,9 +24,19 @@ import type { VideoSummarySourceStatus, VideoTranscriptSegment } from '../types-
 import { MindmapCanvas } from './MindmapCanvas'
 
 type SummaryTab = 'summary' | 'transcript' | 'mindmap' | 'qa'
+
 type SummaryProgress = {
   stage: 'idle' | 'preparing' | 'generating' | 'completed'
   message: string
+}
+
+type SummarySectionKey = 'overview' | 'points' | 'timeline' | 'takeaways' | 'other'
+
+type ParsedSummarySection = {
+  key: SummarySectionKey
+  title: string
+  icon: string
+  content: string
 }
 
 function t(value: string) {
@@ -148,7 +158,10 @@ function formatMarkdownToHtml(markdown: string) {
     const unorderedMatch = trimmed.match(/^[-*]\s+(.*)$/)
     if (unorderedMatch) {
       flushParagraph()
-      orderedItems = orderedItems.length ? (html.push(wrapList(orderedItems, true)), []) : orderedItems
+      if (orderedItems.length) {
+        html.push(wrapList(orderedItems, true))
+        orderedItems = []
+      }
       listItems.push(`<li>${applyInlineMarkdown(unorderedMatch[1])}</li>`)
       continue
     }
@@ -156,7 +169,10 @@ function formatMarkdownToHtml(markdown: string) {
     const orderedMatch = trimmed.match(/^\d+\.\s+(.*)$/)
     if (orderedMatch) {
       flushParagraph()
-      listItems = listItems.length ? (html.push(wrapList(listItems, false)), []) : listItems
+      if (listItems.length) {
+        html.push(wrapList(listItems, false))
+        listItems = []
+      }
       orderedItems.push(`<li>${applyInlineMarkdown(orderedMatch[1])}</li>`)
       continue
     }
@@ -178,6 +194,199 @@ function formatMarkdownToHtml(markdown: string) {
   flushLists()
   flushCodeBlock()
   return html.join('')
+}
+
+function normalizeHeadingKey(title: string): SummarySectionKey {
+  const normalized = title.replaceAll(/\s+/g, '')
+  if (normalized.includes('视频主题概览') || normalized.includes('核心总结') || normalized.includes('总结摘要')) {
+    return 'overview'
+  }
+  if (normalized.includes('核心知识点') || normalized.includes('核心观点')) {
+    return 'points'
+  }
+  if (normalized.includes('分段总结') || normalized.includes('分段解析') || normalized.includes('时间轴')) {
+    return 'timeline'
+  }
+  if (normalized.includes('关键结论') || normalized.includes('学习收获') || normalized.includes('结论') || normalized.includes('启发')) {
+    return 'takeaways'
+  }
+  return 'other'
+}
+
+function getSectionMeta(key: SummarySectionKey, title: string) {
+  if (key === 'overview') {
+    return { title: '核心总结', icon: '🎯' }
+  }
+  if (key === 'points') {
+    return { title: '核心观点', icon: '🧠' }
+  }
+  if (key === 'timeline') {
+    return { title: '分段解析', icon: '⏱' }
+  }
+  if (key === 'takeaways') {
+    return { title: '结论 / 启发', icon: '💡' }
+  }
+  return { title, icon: '📝' }
+}
+
+function parseSummarySections(markdown: string): ParsedSummarySection[] {
+  const normalized = markdown.replace(/\r\n/g, '\n').trim()
+  if (!normalized) {
+    return []
+  }
+
+  const sections: ParsedSummarySection[] = []
+  const headingPattern = /^##\s+(.+)$/gm
+  const matches = [...normalized.matchAll(headingPattern)]
+  if (!matches.length) {
+    return [
+      {
+        key: 'overview',
+        title: '核心总结',
+        icon: '🎯',
+        content: normalized,
+      },
+    ]
+  }
+
+  for (let index = 0; index < matches.length; index += 1) {
+    const current = matches[index]
+    const next = matches[index + 1]
+    const rawTitle = current[1].trim()
+    const start = current.index! + current[0].length
+    const end = next?.index ?? normalized.length
+    const content = normalized.slice(start, end).trim()
+    if (!content) {
+      continue
+    }
+    const key = normalizeHeadingKey(rawTitle)
+    const meta = getSectionMeta(key, rawTitle)
+    sections.push({
+      key,
+      title: meta.title,
+      icon: meta.icon,
+      content,
+    })
+  }
+
+  return sections
+}
+
+function robustParseSummarySections(markdown: string): ParsedSummarySection[] {
+  const normalized = markdown
+    .replace(/\r\n/g, '\n')
+    .replace(/^(#{1,3})([^\s#])/gm, '$1 $2')
+    .replace(/(^|\n)\s*(视频主题概览|核心总结|总结摘要|核心知识点|核心观点|分段总结|分段解析|时间轴|关键结论\s*\/\s*学习收获|关键结论|学习收获|结论\s*\/\s*启发|结论|启发)\s*/g, '\n## $2\n')
+    .replace(/\n{3,}/g, '\n\n')
+    .trim()
+
+  const strictSections = parseSummarySections(normalized)
+  if (strictSections.length > 1) {
+    return strictSections
+  }
+
+  const headingPattern =
+    /(^|\n)\s*(?:#{1,3}\s*)?(视频主题概览|核心总结|总结摘要|核心知识点|核心观点|分段总结|分段解析|时间轴|关键结论\s*\/\s*学习收获|关键结论|学习收获|结论\s*\/\s*启发|结论|启发)\s*/g
+  const matches = [...normalized.matchAll(headingPattern)]
+  if (!matches.length) {
+    return strictSections
+  }
+
+  const resolveKey = (title: string): SummarySectionKey => {
+    const compact = title.replaceAll(/\s+/g, '').replaceAll('：', '').replaceAll(':', '')
+    if (compact.includes('视频主题概览') || compact.includes('核心总结') || compact.includes('总结摘要')) {
+      return 'overview'
+    }
+    if (compact.includes('核心知识点') || compact.includes('核心观点')) {
+      return 'points'
+    }
+    if (compact.includes('分段总结') || compact.includes('分段解析') || compact.includes('时间轴')) {
+      return 'timeline'
+    }
+    if (compact.includes('关键结论') || compact.includes('学习收获') || compact.includes('结论') || compact.includes('启发')) {
+      return 'takeaways'
+    }
+    return 'other'
+  }
+
+  const resolveMeta = (key: SummarySectionKey, fallbackTitle: string) => {
+    if (key === 'overview') {
+      return { title: '核心总结', icon: '🎯' }
+    }
+    if (key === 'points') {
+      return { title: '核心观点', icon: '🧠' }
+    }
+    if (key === 'timeline') {
+      return { title: '分段解析', icon: '⏱' }
+    }
+    if (key === 'takeaways') {
+      return { title: '结论 / 启发', icon: '💡' }
+    }
+    return { title: fallbackTitle, icon: '📘' }
+  }
+
+  const sections: ParsedSummarySection[] = []
+  for (let index = 0; index < matches.length; index += 1) {
+    const current = matches[index]
+    const next = matches[index + 1]
+    const rawTitle = current[2].trim()
+    const start = (current.index ?? 0) + current[0].length
+    const end = next?.index ?? normalized.length
+    const content = normalized.slice(start, end).trim().replace(/^[:：-]\s*/, '')
+    if (!content) {
+      continue
+    }
+    const key = resolveKey(rawTitle)
+    const meta = resolveMeta(key, rawTitle)
+    sections.push({
+      key,
+      title: meta.title,
+      icon: meta.icon,
+      content,
+    })
+  }
+
+  return sections.length ? sections : strictSections
+}
+
+function parseBulletItems(content: string) {
+  return content
+    .split('\n')
+    .map((line) => line.trim())
+    .filter(Boolean)
+    .map((line) => line.replace(/^[-*•]\s*/, '').replace(/^\d+\.\s*/, '').trim())
+    .filter(Boolean)
+}
+
+function parseTimelineItems(content: string) {
+  return content
+    .split('\n')
+    .map((line) => line.trim())
+    .filter(Boolean)
+    .map((line) => line.replace(/^[-*•]\s*/, '').trim())
+    .filter(Boolean)
+    .map((line, index) => {
+      const match = line.match(/^(\d{1,2}:\d{2}(?:\s*[-—]\s*\d{1,2}:\d{2})?)[:：]?\s*(.*)$/)
+      if (match) {
+        return {
+          id: `${match[1]}-${index}`,
+          time: match[1].replace(/\s*/g, ''),
+          text: match[2].trim(),
+        }
+      }
+      return {
+        id: `timeline-${index}`,
+        time: `片段 ${index + 1}`,
+        text: line,
+      }
+    })
+}
+
+function emphasizeInlineText(text: string) {
+  const escaped = escapeHtml(text)
+  return escaped
+    .replace(/\*\*([^*]+)\*\*/g, '<strong class="font-semibold text-slate-950">$1</strong>')
+    .replace(/`([^`]+)`/g, '<span class="rounded-md bg-blue-50 px-1.5 py-0.5 font-medium text-blue-700">$1</span>')
 }
 
 function formatSourceTypeLabel(status: VideoSummarySourceStatus | null) {
@@ -214,7 +423,7 @@ function getSourceBadge(status: VideoSummarySourceStatus | null) {
   if (!status) {
     return {
       label: t('准备提取视频文本'),
-      detail: t('系统会优先使用字幕，其次再尝试语音识别，生成过程中会自动更新当前来源。'),
+      detail: t('系统会优先使用字幕，其次再尝试语音识别，并在生成过程中自动更新当前来源。'),
       icon: Bot,
     }
   }
@@ -259,8 +468,27 @@ const tabs: Array<{ id: SummaryTab; label: string; icon: typeof FileText }> = [
   { id: 'qa', label: t('AI 问答'), icon: MessageSquareText },
 ]
 
-export function VideoSummaryPanel({ result }: { result: VideoMeta }) {
+export function VideoSummaryPanel({
+  result,
+  canUseAi,
+  freeAiSummariesRemainingToday,
+  isLoggedIn,
+  onNeedLogin,
+  onNeedMembership,
+  onRefreshMe,
+  checkoutBusy = false,
+}: {
+  result: VideoMeta
+  canUseAi: boolean
+  freeAiSummariesRemainingToday: number
+  isLoggedIn: boolean
+  onNeedLogin: () => void
+  onNeedMembership: () => void
+  onRefreshMe?: () => void
+  checkoutBusy?: boolean
+}) {
   const [isOpen, setIsOpen] = useState(false)
+  const [accessPrompt, setAccessPrompt] = useState<'free-trial' | 'upgrade' | null>(null)
   const [activeTab, setActiveTab] = useState<SummaryTab>('summary')
   const [summary, setSummary] = useState('')
   const [transcript, setTranscript] = useState('')
@@ -281,10 +509,15 @@ export function VideoSummaryPanel({ result }: { result: VideoMeta }) {
   const [isLoadingTranscript, setIsLoadingTranscript] = useState(false)
   const [isGeneratingMindmap, setIsGeneratingMindmap] = useState(false)
   const [isAsking, setIsAsking] = useState(false)
+  const [localFreeSummariesRemaining, setLocalFreeSummariesRemaining] = useState(freeAiSummariesRemainingToday)
   const summaryStreamRef = useRef<EventSource | null>(null)
   const qaStreamRef = useRef<EventSource | null>(null)
 
+  const canUsePremiumAi = canUseAi
+  const canUseFreeSummaryTrial = !canUsePremiumAi && localFreeSummariesRemaining > 0
+  const visibleTabs = canUsePremiumAi ? tabs : tabs.filter((tab) => tab.id === 'summary')
   const formattedSummary = useMemo(() => formatMarkdownToHtml(summary), [summary])
+  const parsedSummarySections = useMemo(() => robustParseSummarySections(summary), [summary])
   const sourceBadge = useMemo(() => getSourceBadge(sourceStatus), [sourceStatus])
   const transcriptCountLabel = useMemo(
     () => `${transcriptSegments.length || sourceStatus?.segment_count || 0} 段`,
@@ -292,7 +525,12 @@ export function VideoSummaryPanel({ result }: { result: VideoMeta }) {
   )
 
   useEffect(() => {
+    setLocalFreeSummariesRemaining(freeAiSummariesRemainingToday)
+  }, [freeAiSummariesRemainingToday])
+
+  useEffect(() => {
     setIsOpen(false)
+    setAccessPrompt(null)
     setActiveTab('summary')
     setSummary('')
     setTranscript('')
@@ -431,7 +669,19 @@ export function VideoSummaryPanel({ result }: { result: VideoMeta }) {
       }
     })
 
+    stream.addEventListener('preview-summary', (event) => {
+      if (!(event instanceof MessageEvent)) {
+        return
+      }
+      setSummary(String(event.data || ''))
+    })
+
+    stream.addEventListener('summary-reset', () => {
+      setSummary('')
+    })
+
     stream.addEventListener('done', () => {
+      onRefreshMe?.()
       setIsGeneratingSummary(false)
       setSummaryProgress({
         stage: 'completed',
@@ -451,6 +701,7 @@ export function VideoSummaryPanel({ result }: { result: VideoMeta }) {
         stage: 'idle',
         message,
       })
+      onRefreshMe?.()
       closeSummaryStream()
     })
 
@@ -462,11 +713,17 @@ export function VideoSummaryPanel({ result }: { result: VideoMeta }) {
         stage: 'idle',
         message,
       })
+      onRefreshMe?.()
       closeSummaryStream()
     }
   }
 
   async function handleLoadTranscript() {
+    if (!canUsePremiumAi) {
+      setTranscriptError(t('字幕查看需要开通 AI 会员后使用。'))
+      return
+    }
+
     setIsLoadingTranscript(true)
     setTranscriptError(null)
     try {
@@ -484,6 +741,10 @@ export function VideoSummaryPanel({ result }: { result: VideoMeta }) {
   }
 
   async function handleGenerateMindmap() {
+    if (!canUsePremiumAi) {
+      setMindmapError(t('思维导图需要开通 AI 会员后使用。'))
+      return
+    }
     if (!summary.trim() || isGeneratingMindmap) {
       return
     }
@@ -505,6 +766,11 @@ export function VideoSummaryPanel({ result }: { result: VideoMeta }) {
   }
 
   function handleAskQuestion() {
+    if (!canUsePremiumAi) {
+      setQaError(t('AI 问答需要开通 AI 会员后使用。'))
+      return
+    }
+
     const nextQuestion = question.trim()
     if (!summary.trim() || !nextQuestion || isAsking) {
       return
@@ -546,9 +812,31 @@ export function VideoSummaryPanel({ result }: { result: VideoMeta }) {
   }
 
   function handleOpen() {
+    if (!isLoggedIn) {
+      onNeedLogin()
+      return
+    }
+
+    if (!canUsePremiumAi) {
+      setAccessPrompt(canUseFreeSummaryTrial ? 'free-trial' : 'upgrade')
+      return
+    }
+
+    setAccessPrompt(null)
     setIsOpen(true)
     if (!summary && !summaryError && !isGeneratingSummary) {
       handleGenerateSummary()
+    }
+  }
+
+  function handleStartFreeTrial() {
+    setLocalFreeSummariesRemaining(0)
+    setAccessPrompt(null)
+    setIsOpen(true)
+    if (!summary && !summaryError && !isGeneratingSummary) {
+      window.setTimeout(() => {
+        handleGenerateSummary()
+      }, 0)
     }
   }
 
@@ -558,12 +846,91 @@ export function VideoSummaryPanel({ result }: { result: VideoMeta }) {
     <>
       <button
         type="button"
+        disabled={checkoutBusy}
         onClick={handleOpen}
-        className="inline-flex items-center justify-center gap-2 rounded-[1.2rem] border border-slate-200 bg-white px-6 py-3 text-sm font-semibold text-slate-700 shadow-sm transition hover:border-blue-200 hover:bg-blue-50 hover:text-blue-700"
+        className="inline-flex items-center justify-center gap-2 rounded-[1.2rem] border border-slate-200 bg-white px-6 py-3 text-sm font-semibold text-slate-700 shadow-sm transition hover:border-blue-200 hover:bg-blue-50 hover:text-blue-700 disabled:cursor-not-allowed disabled:opacity-60"
       >
         <Bot size={18} />
-        {t('AI 总结')}
+        {checkoutBusy ? t('跳转支付中...') : t('AI 总结')}
       </button>
+
+      {accessPrompt ? (
+        <div className="fixed inset-0 z-[60] flex items-center justify-center bg-slate-950/55 px-4">
+          <div className="absolute inset-0" aria-hidden="true" onClick={() => setAccessPrompt(null)} />
+          <section className="relative z-10 w-full max-w-md rounded-[2rem] bg-white p-6 shadow-[0_30px_80px_rgba(15,23,42,0.35)]">
+            <button
+              type="button"
+              onClick={() => setAccessPrompt(null)}
+              className="absolute right-4 top-4 inline-flex size-9 items-center justify-center rounded-full border border-slate-200 text-slate-500 transition hover:border-slate-300 hover:text-slate-900"
+              aria-label={t('关闭提示')}
+            >
+              <X size={16} />
+            </button>
+
+            {accessPrompt === 'free-trial' ? (
+              <>
+                <div className="flex size-12 items-center justify-center rounded-2xl bg-blue-50 text-blue-600">
+                  <Sparkles size={22} />
+                </div>
+                <h3 className="mt-5 text-2xl font-black text-slate-950">{t('先体验 1 次 AI 总结')}</h3>
+                <p className="mt-3 text-sm leading-7 text-slate-500">
+                  {t('普通用户每天可以免费体验 1 次 AI 总结。本次体验不会直接跳转支付，你可以先免费试用，再决定是否开通会员。')}
+                </p>
+                <div className="mt-6 rounded-[1.25rem] border border-amber-200 bg-amber-50 px-4 py-3 text-sm leading-7 text-amber-800">
+                  {t('免费体验仅包含 AI 总结，字幕查看、思维导图、AI 问答和导出仍需 AI 会员。')}
+                </div>
+                <div className="mt-6 flex flex-col gap-3">
+                  <button
+                    type="button"
+                    onClick={handleStartFreeTrial}
+                    className="inline-flex w-full items-center justify-center gap-2 rounded-[1rem] bg-slate-950 px-4 py-3 text-sm font-semibold text-white transition hover:bg-slate-800"
+                  >
+                    <Sparkles size={16} />
+                    {t('免费体验 1 次')}
+                  </button>
+                  <button
+                    type="button"
+                    disabled={checkoutBusy}
+                    onClick={onNeedMembership}
+                    className="inline-flex w-full items-center justify-center gap-2 rounded-[1rem] border border-slate-200 bg-white px-4 py-3 text-sm font-semibold text-slate-700 transition hover:border-blue-200 hover:bg-blue-50 hover:text-blue-700 disabled:cursor-not-allowed disabled:opacity-60"
+                  >
+                    <Bot size={16} />
+                    {checkoutBusy ? t('跳转支付中...') : t('去开通会员')}
+                  </button>
+                </div>
+              </>
+            ) : (
+              <>
+                <div className="flex size-12 items-center justify-center rounded-2xl bg-amber-50 text-amber-600">
+                  <Bot size={22} />
+                </div>
+                <h3 className="mt-5 text-2xl font-black text-slate-950">{t('今日免费次数已用完')}</h3>
+                <p className="mt-3 text-sm leading-7 text-slate-500">
+                  {t('普通用户每天只能免费使用 1 次 AI 总结。如果你今天还想继续使用，需要开通 AI 会员。')}
+                </p>
+                <div className="mt-6 flex flex-col gap-3">
+                  <button
+                    type="button"
+                    onClick={() => setAccessPrompt(null)}
+                    className="inline-flex w-full items-center justify-center rounded-[1rem] border border-slate-200 bg-white px-4 py-3 text-sm font-semibold text-slate-700 transition hover:border-slate-300 hover:bg-slate-50"
+                  >
+                    {t('我知道了')}
+                  </button>
+                  <button
+                    type="button"
+                    disabled={checkoutBusy}
+                    onClick={onNeedMembership}
+                    className="inline-flex w-full items-center justify-center gap-2 rounded-[1rem] bg-slate-950 px-4 py-3 text-sm font-semibold text-white transition hover:bg-slate-800 disabled:cursor-not-allowed disabled:opacity-60"
+                  >
+                    <Sparkles size={16} />
+                    {checkoutBusy ? t('跳转支付中...') : t('去开通会员')}
+                  </button>
+                </div>
+              </>
+            )}
+          </section>
+        </div>
+      ) : null}
 
       {isOpen ? (
         <div className="fixed inset-0 z-50 flex items-end justify-center bg-slate-950/55 p-0 sm:items-center sm:p-6">
@@ -587,7 +954,7 @@ export function VideoSummaryPanel({ result }: { result: VideoMeta }) {
                 </div>
                 <div className="min-w-0 self-end">
                   <div className="mb-[-1px] grid w-full grid-cols-4 items-center rounded-t-[1.5rem] border border-slate-200 border-b-white bg-white/90 px-2 pt-2">
-                    {tabs.map((tab) => {
+                    {visibleTabs.map((tab) => {
                       const Icon = tab.icon
                       const isActive = activeTab === tab.id
                       return (
@@ -596,9 +963,7 @@ export function VideoSummaryPanel({ result }: { result: VideoMeta }) {
                           type="button"
                           onClick={() => setActiveTab(tab.id)}
                           className={`relative inline-flex min-w-0 items-center justify-center gap-2 rounded-t-[1rem] px-3 py-3 text-[15px] font-semibold transition ${
-                            isActive
-                              ? 'bg-white text-blue-600'
-                              : 'text-slate-500 hover:text-slate-900'
+                            isActive ? 'bg-white text-blue-600' : 'text-slate-500 hover:text-slate-900'
                           }`}
                         >
                           <Icon size={16} className="shrink-0" />
@@ -636,6 +1001,7 @@ export function VideoSummaryPanel({ result }: { result: VideoMeta }) {
                       </div>
                       <div>
                         <p className="text-sm font-semibold text-slate-900">{sourceBadge.label}</p>
+                        <p className="mt-1 text-xs leading-6 text-slate-500">{sourceBadge.detail}</p>
                       </div>
                     </div>
                   </div>
@@ -652,10 +1018,16 @@ export function VideoSummaryPanel({ result }: { result: VideoMeta }) {
                       <div className="flex flex-wrap gap-2">
                         <InfoPill>{formatSourceTypeLabel(sourceStatus)}</InfoPill>
                         <InfoPill>{sourceStatus?.fallback_used ? t('启用兜底') : t('优先路径')}</InfoPill>
-                        <InfoPill>{`${sourceStatus?.character_count ?? '--'} ${t('字')}`}</InfoPill>
+                        <InfoPill>{`${sourceStatus?.character_count ?? '--'} 字`}</InfoPill>
                         <InfoPill>{summaryProgress.message}</InfoPill>
                       </div>
                     </div>
+
+                    {!canUsePremiumAi ? (
+                      <div className="rounded-[1.25rem] border border-amber-200 bg-amber-50 px-4 py-3 text-sm leading-7 text-amber-800">
+                        {t('本次为免费 AI 总结体验，字幕查看、思维导图、AI 问答和导出功能需要开通会员后使用。')}
+                      </div>
+                    ) : null}
 
                     <div className="space-y-3 rounded-[1.5rem] bg-white p-4 shadow-sm ring-1 ring-slate-100">
                       <ActionButton
@@ -667,23 +1039,37 @@ export function VideoSummaryPanel({ result }: { result: VideoMeta }) {
                         {isGeneratingSummary ? t('正在生成...') : t('重新生成总结')}
                       </ActionButton>
 
-                      <ActionButton
-                        icon={isLoadingTranscript ? <LoaderCircle size={16} className="animate-spin" /> : <Subtitles size={16} />}
-                        onClick={() => void handleLoadTranscript()}
-                        disabled={isLoadingTranscript}
-                        className="border border-slate-200 bg-white text-slate-700 hover:border-slate-300 hover:bg-slate-50 disabled:text-slate-400"
-                      >
-                        {isLoadingTranscript ? t('正在加载...') : t('加载字幕文本')}
-                      </ActionButton>
+                      {canUsePremiumAi ? (
+                        <>
+                          <ActionButton
+                            icon={isLoadingTranscript ? <LoaderCircle size={16} className="animate-spin" /> : <Subtitles size={16} />}
+                            onClick={() => void handleLoadTranscript()}
+                            disabled={isLoadingTranscript}
+                            className="border border-slate-200 bg-white text-slate-700 hover:border-slate-300 hover:bg-slate-50 disabled:text-slate-400"
+                          >
+                            {isLoadingTranscript ? t('正在加载...') : t('加载字幕文本')}
+                          </ActionButton>
 
-                      <ActionButton
-                        icon={isGeneratingMindmap ? <LoaderCircle size={16} className="animate-spin" /> : <GitBranch size={16} />}
-                        onClick={() => void handleGenerateMindmap()}
-                        disabled={!summary.trim() || isGeneratingMindmap}
-                        className="border border-emerald-200 bg-emerald-50 text-emerald-700 hover:bg-emerald-100 disabled:border-slate-200 disabled:bg-slate-100 disabled:text-slate-400"
-                      >
-                        {isGeneratingMindmap ? t('正在生成...') : t('生成思维导图')}
-                      </ActionButton>
+                          <ActionButton
+                            icon={isGeneratingMindmap ? <LoaderCircle size={16} className="animate-spin" /> : <GitBranch size={16} />}
+                            onClick={() => void handleGenerateMindmap()}
+                            disabled={!summary.trim() || isGeneratingMindmap}
+                            className="border border-emerald-200 bg-emerald-50 text-emerald-700 hover:bg-emerald-100 disabled:border-slate-200 disabled:bg-slate-100 disabled:text-slate-400"
+                          >
+                            {isGeneratingMindmap ? t('正在生成...') : t('生成思维导图')}
+                          </ActionButton>
+                        </>
+                      ) : (
+                        <button
+                          type="button"
+                          disabled={checkoutBusy}
+                          onClick={onNeedMembership}
+                          className="inline-flex w-full items-center justify-center gap-2 rounded-[1rem] border border-blue-200 bg-blue-50 px-4 py-3 text-sm font-semibold text-blue-700 transition hover:bg-blue-100 disabled:cursor-not-allowed disabled:opacity-60"
+                        >
+                          <Sparkles size={16} />
+                          {checkoutBusy ? t('跳转支付中...') : t('开通会员解锁更多 AI 功能')}
+                        </button>
+                      )}
                     </div>
                   </div>
                 </aside>
@@ -695,18 +1081,35 @@ export function VideoSummaryPanel({ result }: { result: VideoMeta }) {
                         {summaryError ? <ErrorNotice message={summaryError} /> : null}
 
                         {summary ? (
-                          <article className="mx-auto max-w-[1040px] rounded-[1.9rem] border border-slate-200 bg-white px-8 py-8 shadow-[0_16px_40px_rgba(15,23,42,0.05)] sm:px-10 sm:py-10">
-                            <div
-                              className="summary-rich max-w-none [&_h1+*]:mt-0 [&_h2:first-child]:mt-0 [&_h2:first-child]:border-t-0 [&_h2:first-child]:pt-0 [&_h3:first-child]:mt-0 [&_li>strong]:text-slate-950 [&_ol]:space-y-4 [&_ul]:space-y-4"
-                              dangerouslySetInnerHTML={{ __html: formattedSummary }}
-                            />
+                          <article className="mx-auto max-w-[1040px]">
+                            <div className="rounded-[2rem] border border-slate-200 bg-[linear-gradient(180deg,_#ffffff,_#f8fbff)] p-5 shadow-[0_20px_48px_rgba(15,23,42,0.06)] sm:p-6">
+                              <div className="flex flex-wrap items-center gap-2 rounded-[1.2rem] border border-slate-200 bg-slate-50/80 px-3.5 py-2.5">
+                                <span className="inline-flex items-center rounded-full bg-white px-2.5 py-1 text-[11px] font-semibold uppercase tracking-[0.14em] text-slate-500 ring-1 ring-slate-200">
+                                  {t('AI Summary')}
+                                </span>
+                                <span className="text-sm font-medium text-slate-500">{t('⚡ 10 秒看重点')}</span>
+                                <span className="hidden text-slate-300 sm:inline">·</span>
+                                <span className="text-sm text-slate-400">{t('核心 → 观点 → 时间线')}</span>
+                              </div>
+
+                              {parsedSummarySections.length ? (
+                                <div className="mt-5 grid gap-4">
+                                  {parsedSummarySections.map((section) => (
+                                    <SummarySectionCard key={`${section.key}-${section.title}`} section={section} />
+                                  ))}
+                                </div>
+                              ) : (
+                                <div
+                                  className="summary-rich mt-5 max-w-none rounded-[1.6rem] border border-slate-200 bg-white px-6 py-6 shadow-sm [&_h1+*]:mt-0 [&_h2:first-child]:mt-0 [&_h2:first-child]:border-t-0 [&_h2:first-child]:pt-0 [&_h3:first-child]:mt-0 [&_li>strong]:text-slate-950 [&_ol]:space-y-4 [&_ul]:space-y-4"
+                                  dangerouslySetInnerHTML={{ __html: formattedSummary }}
+                                />
+                              )}
+                            </div>
                           </article>
                         ) : (
                           <EmptyPane
                             text={
-                              isGeneratingSummary
-                                ? summaryProgress.message
-                                : t('点击左侧“重新生成总结”后开始输出。')
+                              isGeneratingSummary ? summaryProgress.message : t('点击左侧“重新生成总结”后开始输出。')
                             }
                           />
                         )}
@@ -768,11 +1171,7 @@ export function VideoSummaryPanel({ result }: { result: VideoMeta }) {
                           </div>
                         ) : (
                           <EmptyPane
-                            text={
-                              isLoadingTranscript
-                                ? t('正在加载字幕文本...')
-                                : t('点击左侧“加载字幕文本”后查看字幕时间轴。')
-                            }
+                            text={isLoadingTranscript ? t('正在加载字幕文本...') : t('点击左侧“加载字幕文本”后查看字幕时间轴。')}
                           />
                         )}
                       </div>
@@ -782,11 +1181,7 @@ export function VideoSummaryPanel({ result }: { result: VideoMeta }) {
                       <div className="h-full min-h-[640px]">
                         {mindmapError ? <ErrorNotice message={mindmapError} /> : null}
 
-                        {mindmapData ? (
-                          <MindmapCanvas rawMindmap={mindmapData} />
-                        ) : (
-                          <EmptyPane text={t('先生成总结，再点击左侧“生成思维导图”。')} />
-                        )}
+                        {mindmapData ? <MindmapCanvas rawMindmap={mindmapData} /> : <EmptyPane text={t('先生成总结，再点击左侧“生成思维导图”。')} />}
                       </div>
                     ) : null}
 
@@ -862,6 +1257,120 @@ function ActionButton({
       {icon}
       {children}
     </button>
+  )
+}
+
+function SummarySectionCard({ section }: { section: ParsedSummarySection }) {
+  const bulletItems = parseBulletItems(section.content)
+  const timelineItems = parseTimelineItems(section.content)
+
+  if (section.key === 'overview') {
+    return (
+      <section className="overflow-hidden rounded-[1.6rem] border border-slate-200 bg-white shadow-sm">
+        <div className="flex items-center gap-3 border-b border-slate-100 px-5 py-4">
+          <span className="flex size-10 items-center justify-center rounded-2xl bg-blue-50 text-lg">{section.icon}</span>
+          <div>
+            <h3 className="text-[18px] font-bold tracking-[-0.01em] text-slate-950">{section.title}</h3>
+            <p className="text-xs font-medium text-slate-400">{t('3 行内快速看懂这条视频')}</p>
+          </div>
+        </div>
+        <div className="px-5 py-5">
+          <p
+            className="max-w-4xl text-[15px] leading-[1.85] text-slate-700 sm:text-[16px]"
+            dangerouslySetInnerHTML={{ __html: emphasizeInlineText(section.content) }}
+          />
+        </div>
+      </section>
+    )
+  }
+
+  if (section.key === 'points') {
+    return (
+      <section className="overflow-hidden rounded-[1.6rem] border border-slate-200 bg-white shadow-sm">
+        <div className="flex items-center gap-3 border-b border-slate-100 px-5 py-4">
+          <span className="flex size-10 items-center justify-center rounded-2xl bg-indigo-50 text-lg">{section.icon}</span>
+          <div>
+            <h3 className="text-[18px] font-bold tracking-[-0.01em] text-slate-950">{section.title}</h3>
+            <p className="text-xs font-medium text-slate-400">{t('只保留最值得记住的 3 到 5 个点')}</p>
+          </div>
+        </div>
+        <div className="grid gap-3 px-5 py-5">
+          {bulletItems.map((item, index) => (
+            <div key={`${section.title}-${index}`} className="flex gap-3 rounded-[1.2rem] border border-slate-100 bg-slate-50/70 px-4 py-3">
+              <span className="mt-1 flex size-6 shrink-0 items-center justify-center rounded-full bg-blue-500/10 text-xs font-semibold text-blue-600">
+                {index + 1}
+              </span>
+              <p
+                className="text-[14px] leading-[1.8] text-slate-700"
+                dangerouslySetInnerHTML={{ __html: emphasizeInlineText(item) }}
+              />
+            </div>
+          ))}
+        </div>
+      </section>
+    )
+  }
+
+  if (section.key === 'timeline') {
+    return (
+      <section className="overflow-hidden rounded-[1.6rem] border border-slate-200 bg-white shadow-sm">
+        <div className="flex items-center gap-3 border-b border-slate-100 px-5 py-4">
+          <span className="flex size-10 items-center justify-center rounded-2xl bg-sky-50 text-lg">{section.icon}</span>
+          <div>
+            <h3 className="text-[18px] font-bold tracking-[-0.01em] text-slate-950">{section.title}</h3>
+            <p className="text-xs font-medium text-slate-400">{t('按时间顺序快速回看视频结构')}</p>
+          </div>
+        </div>
+        <div className="space-y-4 px-5 py-5">
+          {timelineItems.map((item) => (
+            <div key={item.id} className="grid gap-3 border-l border-slate-200 pl-4 md:grid-cols-[120px_minmax(0,1fr)] md:items-start">
+              <div className="inline-flex w-fit items-center rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold text-slate-500">
+                {item.time}
+              </div>
+              <p
+                className="text-[14px] leading-[1.8] text-slate-700"
+                dangerouslySetInnerHTML={{ __html: emphasizeInlineText(item.text) }}
+              />
+            </div>
+          ))}
+        </div>
+      </section>
+    )
+  }
+
+  if (section.key === 'takeaways') {
+    return (
+      <section className="overflow-hidden rounded-[1.6rem] border border-blue-200 bg-[linear-gradient(135deg,_#eff6ff,_#ffffff_72%)] shadow-sm">
+        <div className="flex items-center gap-3 border-b border-blue-100 px-5 py-4">
+          <span className="flex size-10 items-center justify-center rounded-2xl bg-white text-lg shadow-sm">{section.icon}</span>
+          <div>
+            <h3 className="text-[18px] font-bold tracking-[-0.01em] text-slate-950">{section.title}</h3>
+            <p className="text-xs font-medium text-blue-500">{t('最后只记住这一层就够了')}</p>
+          </div>
+        </div>
+        <div className="px-5 py-5">
+          <div className="rounded-[1.3rem] border border-white/80 bg-white/80 px-4 py-4 shadow-sm">
+            <p
+              className="text-[15px] leading-[1.85] text-slate-700"
+              dangerouslySetInnerHTML={{ __html: emphasizeInlineText(section.content) }}
+            />
+          </div>
+        </div>
+      </section>
+    )
+  }
+
+  return (
+    <section className="overflow-hidden rounded-[1.6rem] border border-slate-200 bg-white shadow-sm">
+      <div className="flex items-center gap-3 border-b border-slate-100 px-5 py-4">
+        <span className="flex size-10 items-center justify-center rounded-2xl bg-slate-100 text-lg">{section.icon}</span>
+        <h3 className="text-[18px] font-bold tracking-[-0.01em] text-slate-950">{section.title}</h3>
+      </div>
+      <div
+        className="summary-rich px-5 py-5 text-[14px] leading-[1.8] text-slate-700 [&_li>strong]:text-slate-950 [&_ol]:space-y-3 [&_ul]:space-y-3"
+        dangerouslySetInnerHTML={{ __html: formatMarkdownToHtml(section.content) }}
+      />
+    </section>
   )
 }
 

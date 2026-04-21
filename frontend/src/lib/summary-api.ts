@@ -1,8 +1,6 @@
 import type { VideoMindmapResponse, VideoTranscriptResponse } from '../types-summary'
 
-const API_BASE_URL =
-  (import.meta.env.VITE_API_BASE_URL as string | undefined)?.replace(/\/$/, '') ||
-  'http://127.0.0.1:8000'
+import { API_BASE_URL } from './api'
 
 function buildApiUrl(path: string) {
   return `${API_BASE_URL}${path}`
@@ -14,21 +12,31 @@ function buildStreamUrl(path: string, params: Record<string, string>) {
 }
 
 async function requestJson<T>(path: string): Promise<T> {
-  const response = await fetch(buildApiUrl(path))
-  const payload = (await response.json()) as T & { error?: string }
+  const response = await fetch(buildApiUrl(path), { credentials: 'include' })
+  const payload = (await response.json()) as T & {
+    error?: string | { code?: string; message?: string }
+    detail?: { error?: { message?: string } }
+  }
   if (!response.ok) {
-    const message = typeof payload === 'object' && payload && 'error' in payload ? payload.error : null
-    throw new Error(message || `请求失败（HTTP ${response.status}）`)
+    const message =
+      typeof payload?.error === 'string'
+        ? payload.error
+        : payload?.error?.message ?? payload?.detail?.error?.message ?? null
+    throw new Error(message || `Request failed (HTTP ${response.status})`)
   }
   return payload
 }
 
 export function parseSummaryStreamError(raw: string) {
+  const fallbackMessage = 'AI request failed, please try again later.'
   try {
-    const payload = JSON.parse(raw) as { message?: string }
-    return payload.message || 'AI 请求失败，请稍后重试。'
+    const payload = JSON.parse(raw) as { code?: string; message?: string }
+    if (payload.message && payload.code) {
+      return `${payload.message} (${payload.code})`
+    }
+    return payload.message || fallbackMessage
   } catch {
-    return raw || 'AI 请求失败，请稍后重试。'
+    return raw || fallbackMessage
   }
 }
 
@@ -38,6 +46,7 @@ export function openVideoSummaryStream(url: string, preferredLanguage = 'zh-CN')
       video_url: url,
       preferred_language: preferredLanguage,
     }),
+    { withCredentials: true },
   )
 }
 
@@ -52,6 +61,7 @@ export function openVideoQuestionStream(
       question,
       preferred_language: preferredLanguage,
     }),
+    { withCredentials: true },
   )
 }
 

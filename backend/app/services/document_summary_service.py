@@ -8,6 +8,7 @@ from openai import APIConnectionError, APIError, APITimeoutError, Authentication
 
 from app.schemas_summary import VideoSummarySourceStatus
 from app.services.ai_client import AIClient
+from app.services.asr_service import AsrTranscriptionError
 from app.services.summary_cache import SummaryCacheStore
 from app.services.summary_service import SummaryServiceError
 from app.services.transcript_models import TranscriptBundle, TranscriptSegment
@@ -55,6 +56,109 @@ class DocumentSummaryService:
             max_chars=max_chars,
         )
 
+    def get_video_info(self, *, url: str) -> dict[str, Any]:
+        if not self.ai_client.is_configured():
+            raise SummaryServiceError(
+                code="AI_PROVIDER_ERROR",
+                message="AI 服务未配置，请先设置 AI_API_KEY。",
+            )
+
+        try:
+            return self.video_service.extract_info(url)
+        except Exception as exc:
+            raise SummaryServiceError(
+                code="SUMMARY_NOT_SUPPORTED",
+                message="当前视频暂不支持 AI 总结，暂时无法解析视频信息。",
+                detail=str(exc),
+            ) from exc
+
+    def build_transcript_bundle(
+        self,
+        *,
+        info: dict[str, Any],
+        url: str,
+        preferred_language: str | None,
+    ) -> TranscriptBundle:
+        try:
+            return self.transcript_service.build_bundle(info, preferred_language, source_url=url)
+        except AsrTranscriptionError as exc:
+            raise SummaryServiceError(
+                code=exc.code,
+                message=exc.message,
+                detail=exc.detail,
+            ) from exc
+        except httpx.HTTPError as exc:
+            raise SummaryServiceError(
+                code="TRANSCRIPT_UNAVAILABLE",
+                message="字幕获取失败，当前视频暂时无法进行 AI 分析。",
+                detail=str(exc),
+            ) from exc
+
+    def will_likely_use_asr(self, info: dict[str, Any]) -> bool:
+        if info.get("subtitles") or info.get("automatic_captions"):
+            return False
+        webpage_url = str(info.get("webpage_url") or "").lower()
+        return "bilibili.com" not in webpage_url
+
+    def build_asr_preview_summary(
+        self,
+        *,
+        info: dict[str, Any],
+        url: str,
+        preferred_language: str | None,
+    ) -> str | None:
+        asr_source_url = str(info.get("_summary_media_url") or url or "").strip()
+        if not asr_source_url:
+            return None
+
+        try:
+            segments_payload, _ = self.transcript_service.asr_service.transcribe_url_preview(
+                asr_source_url,
+                preferred_language,
+            )
+        except AsrTranscriptionError:
+            return None
+
+        preview_segments = [
+            TranscriptSegment(
+                start_seconds=segment.get("start_seconds"),
+                end_seconds=segment.get("end_seconds"),
+                text=str(segment.get("text") or "").strip(),
+            )
+            for segment in segments_payload
+            if str(segment.get("text") or "").strip()
+        ]
+        if not preview_segments:
+            return None
+
+        transcript_text = self._segments_to_text(preview_segments, max_chars=320)
+        if len(transcript_text.strip()) < 30:
+            return None
+
+        return self._complete_text(
+            system_prompt=(
+                "You are a video learning assistant. "
+                "Write polished Markdown in the user's preferred language. "
+                "When responding in Chinese, always use Simplified Chinese characters. "
+                "This is an early preview based on only the first part of the transcript, "
+                "so keep it short, clear, and explicit that it is a preview."
+            ),
+            user_prompt=(
+                "Generate an early preview summary in Markdown.\n\n"
+                "Use this exact compact structure:\n"
+                "## 核心总结\n"
+                "Write 1 to 2 short sentences.\n\n"
+                "## 核心观点\n"
+                "Use 2 to 3 bullet points.\n\n"
+                "Do not mention information that is not supported by the transcript excerpt.\n"
+                "Keep the whole response short and easy to scan.\n\n"
+                f"Video title: {info.get('title') or 'Untitled video'}\n"
+                f"Transcript excerpt:\n{transcript_text}"
+            ),
+            temperature=0.3,
+            max_tokens=360,
+        ).strip()
+
     def stream_summary_from_context(
         self,
         *,
@@ -80,15 +184,22 @@ class DocumentSummaryService:
                 "You are a video learning assistant. "
                 "Write polished Markdown in the user's preferred language. "
                 "When responding in Chinese, always use Simplified Chinese characters. "
-                "Be concise, structured, and faithful to the supplied transcript."
+                "Be concise, structured, easy to scan, and faithful to the supplied transcript. "
+                "Prefer short blocks, strong hierarchy, and bullet points over long paragraphs."
             ),
             user_prompt=(
                 "Please summarize the following video for fast learning.\n\n"
                 "Use this exact structure in Markdown:\n"
                 "## 视频主题概览\n"
+                "Write 2 to 3 short sentences only.\n\n"
                 "## 核心知识点\n"
+                "Use 3 to 5 bullet points. Each point should be one sentence.\n\n"
                 "## 分段总结\n"
-                "## 关键结论 / 学习收获\n\n"
+                "Use bullet points with timestamps like `0:00-0:12：...`.\n"
+                "Each line should be concise and focus on one segment only.\n\n"
+                "## 关键结论 / 学习收获\n"
+                "Use 2 to 3 short bullet points or one short paragraph.\n\n"
+                "Do not write long essays. Keep every section compact and easy to scan in 10 seconds.\n\n"
                 f"Video title: {info.get('title') or 'Untitled video'}\n"
                 f"Video description: {str(info.get('description') or '').strip()[:1200] or '(empty)'}\n\n"
                 f"Transcript:\n{transcript_text}"
@@ -210,7 +321,7 @@ class DocumentSummaryService:
         self._ensure_document_supported(bundle)
 
         transcript_text = self._segments_to_text(bundle.segments, max_chars=max_chars)
-        if len(transcript_text.strip()) < 120:
+        if not self._has_usable_transcript_text(info=info, bundle=bundle, transcript_text=transcript_text):
             raise SummaryServiceError(
                 code="TRANSCRIPT_UNAVAILABLE",
                 message="当前视频缺少可用字幕文本，暂时无法生成 AI 总结。",
@@ -218,36 +329,49 @@ class DocumentSummaryService:
 
         return info, bundle, transcript_text
 
+    def _has_usable_transcript_text(
+        self,
+        *,
+        info: dict[str, Any],
+        bundle: TranscriptBundle,
+        transcript_text: str,
+    ) -> bool:
+        normalized = transcript_text.strip()
+        if not normalized:
+            return False
+
+        char_count = len(normalized)
+        if char_count >= 120:
+            return True
+
+        duration = info.get("duration")
+        try:
+            duration_seconds = int(float(duration)) if duration is not None else None
+        except (TypeError, ValueError):
+            duration_seconds = None
+
+        # Short videos often have very little transcript text. As long as ASR or subtitles
+        # produced usable segments, we still allow summarization for these clips.
+        if bundle.segment_count >= 1 and char_count >= 20 and duration_seconds is not None and duration_seconds <= 90:
+            return True
+
+        if bundle.source_type == "speech_to_text" and bundle.segment_count >= 3 and char_count >= 20:
+            return True
+
+        return False
+
     def _prepare_bundle(
         self,
         *,
         url: str,
         preferred_language: str | None,
     ) -> tuple[dict[str, Any], TranscriptBundle]:
-        if not self.ai_client.is_configured():
-            raise SummaryServiceError(
-                code="AI_PROVIDER_ERROR",
-                message="AI 服务未配置，请先设置 AI_API_KEY。",
-            )
-
-        try:
-            info = self.video_service.extract_info(url)
-        except Exception as exc:
-            raise SummaryServiceError(
-                code="SUMMARY_NOT_SUPPORTED",
-                message="当前视频暂不支持 AI 总结，暂时无法解析视频信息。",
-                detail=str(exc),
-            ) from exc
-
-        try:
-            bundle = self.transcript_service.build_bundle(info, preferred_language, source_url=url)
-        except httpx.HTTPError as exc:
-            raise SummaryServiceError(
-                code="TRANSCRIPT_UNAVAILABLE",
-                message="字幕获取失败，当前视频暂时无法进行 AI 分析。",
-                detail=str(exc),
-            ) from exc
-
+        info = self.get_video_info(url=url)
+        bundle = self.build_transcript_bundle(
+            info=info,
+            url=url,
+            preferred_language=preferred_language,
+        )
         return info, bundle
 
     def _ensure_document_supported(self, bundle: TranscriptBundle) -> None:

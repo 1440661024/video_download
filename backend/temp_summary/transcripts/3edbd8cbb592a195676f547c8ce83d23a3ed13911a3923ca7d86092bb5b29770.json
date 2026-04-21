@@ -1,0 +1,542 @@
+{
+  "source_type": "speech_to_text",
+  "language": "zh",
+  "fallback_used": true,
+  "segments": [
+    {
+      "start_seconds": 0,
+      "end_seconds": 2,
+      "text": "嘿嘿嘿 奶奶 过年好啊"
+    },
+    {
+      "start_seconds": 4,
+      "end_seconds": 5,
+      "text": "小机器人"
+    },
+    {
+      "start_seconds": 5,
+      "end_seconds": 7,
+      "text": "大过年的 怎么还在睡觉"
+    },
+    {
+      "start_seconds": 7,
+      "end_seconds": 8,
+      "text": "奶奶都去太空了"
+    },
+    {
+      "start_seconds": 8,
+      "end_seconds": 9,
+      "text": "你还睡"
+    },
+    {
+      "start_seconds": 10,
+      "end_seconds": 10,
+      "text": "呦"
+    },
+    {
+      "start_seconds": 11,
+      "end_seconds": 12,
+      "text": "慢慢的"
+    },
+    {
+      "start_seconds": 14,
+      "end_seconds": 16,
+      "text": "轻轻的"
+    },
+    {
+      "start_seconds": 16,
+      "end_seconds": 18,
+      "text": "洗床了"
+    },
+    {
+      "start_seconds": 20,
+      "end_seconds": 21,
+      "text": "睡得更死了"
+    },
+    {
+      "start_seconds": 22,
+      "end_seconds": 23,
+      "text": "没事的 我来救你"
+    },
+    {
+      "start_seconds": 23,
+      "end_seconds": 25,
+      "text": "小机器人 你快起来"
+    },
+    {
+      "start_seconds": 25,
+      "end_seconds": 27,
+      "text": "没有你 我就要睡觉了"
+    },
+    {
+      "start_seconds": 27,
+      "end_seconds": 28,
+      "text": "你可算醒了"
+    },
+    {
+      "start_seconds": 28,
+      "end_seconds": 29,
+      "text": "担心死了"
+    },
+    {
+      "start_seconds": 30,
+      "end_seconds": 31,
+      "text": "你别咬我"
+    },
+    {
+      "start_seconds": 31,
+      "end_seconds": 33,
+      "text": "松口"
+    },
+    {
+      "start_seconds": 33,
+      "end_seconds": 34,
+      "text": "奶奶"
+    },
+    {
+      "start_seconds": 34,
+      "end_seconds": 34,
+      "text": "小鸡群人"
+    },
+    {
+      "start_seconds": 34,
+      "end_seconds": 35,
+      "text": "松了"
+    },
+    {
+      "start_seconds": 35,
+      "end_seconds": 37,
+      "text": "快松口啊"
+    },
+    {
+      "start_seconds": 37,
+      "end_seconds": 39,
+      "text": "你怎么跟死高利雪啊"
+    },
+    {
+      "start_seconds": 39,
+      "end_seconds": 45,
+      "text": "你给我松口"
+    },
+    {
+      "start_seconds": 45,
+      "end_seconds": 45,
+      "text": "好的"
+    },
+    {
+      "start_seconds": 45,
+      "end_seconds": 48,
+      "text": "今天我要给奶奶做年夜饭"
+    },
+    {
+      "start_seconds": 48,
+      "end_seconds": 48,
+      "text": "哦"
+    },
+    {
+      "start_seconds": 48,
+      "end_seconds": 50,
+      "text": "盘子备好"
+    },
+    {
+      "start_seconds": 50,
+      "end_seconds": 51,
+      "text": "拿点红薯"
+    },
+    {
+      "start_seconds": 51,
+      "end_seconds": 52,
+      "text": "再来点猫粮"
+    },
+    {
+      "start_seconds": 52,
+      "end_seconds": 53,
+      "text": "哎"
+    },
+    {
+      "start_seconds": 53,
+      "end_seconds": 55,
+      "text": "还有最健康的蔬菜"
+    },
+    {
+      "start_seconds": 55,
+      "end_seconds": 55,
+      "text": "嗯"
+    },
+    {
+      "start_seconds": 55,
+      "end_seconds": 57,
+      "text": "色香味俱全"
+    },
+    {
+      "start_seconds": 57,
+      "end_seconds": 58,
+      "text": "好的"
+    },
+    {
+      "start_seconds": 58,
+      "end_seconds": 60,
+      "text": "给奶奶蹲到桌子上"
+    },
+    {
+      "start_seconds": 60,
+      "end_seconds": 61,
+      "text": "慢慢"
+    },
+    {
+      "start_seconds": 61,
+      "end_seconds": 62,
+      "text": "奶奶"
+    },
+    {
+      "start_seconds": 62,
+      "end_seconds": 63,
+      "text": "哎呀"
+    },
+    {
+      "start_seconds": 63,
+      "end_seconds": 64,
+      "text": "完了"
+    },
+    {
+      "start_seconds": 64,
+      "end_seconds": 64,
+      "text": "哎"
+    },
+    {
+      "start_seconds": 64,
+      "end_seconds": 65,
+      "text": "奶奶"
+    },
+    {
+      "start_seconds": 65,
+      "end_seconds": 66,
+      "text": "你怎么从台湖回来了"
+    },
+    {
+      "start_seconds": 66,
+      "end_seconds": 67,
+      "text": "你别生气"
+    },
+    {
+      "start_seconds": 67,
+      "end_seconds": 69,
+      "text": "我又不是故意"
+    },
+    {
+      "start_seconds": 69,
+      "end_seconds": 71,
+      "text": "你冷静点"
+    },
+    {
+      "start_seconds": 71,
+      "end_seconds": 73,
+      "text": "大过年的别动怒"
+    },
+    {
+      "start_seconds": 73,
+      "end_seconds": 75,
+      "text": "你这孩子真不听话"
+    },
+    {
+      "start_seconds": 75,
+      "end_seconds": 76,
+      "text": "会祸兴趣吧"
+    },
+    {
+      "start_seconds": 78,
+      "end_seconds": 79,
+      "text": "OK 过年了"
+    },
+    {
+      "start_seconds": 79,
+      "end_seconds": 81,
+      "text": "给邻居们拜个年去"
+    },
+    {
+      "start_seconds": 81,
+      "end_seconds": 82,
+      "text": "嗯"
+    },
+    {
+      "start_seconds": 82,
+      "end_seconds": 84,
+      "text": "哎"
+    },
+    {
+      "start_seconds": 84,
+      "end_seconds": 86,
+      "text": "哇 外面天气还挺好"
+    },
+    {
+      "start_seconds": 86,
+      "end_seconds": 87,
+      "text": "嘿 荷兰猪"
+    },
+    {
+      "start_seconds": 87,
+      "end_seconds": 88,
+      "text": "过年好啊"
+    },
+    {
+      "start_seconds": 88,
+      "end_seconds": 90,
+      "text": "开心的飞起来"
+    },
+    {
+      "start_seconds": 90,
+      "end_seconds": 91,
+      "text": "小鸭子"
+    },
+    {
+      "start_seconds": 91,
+      "end_seconds": 92,
+      "text": "过年好啊"
+    },
+    {
+      "start_seconds": 92,
+      "end_seconds": 92,
+      "text": "来"
+    },
+    {
+      "start_seconds": 92,
+      "end_seconds": 94,
+      "text": "过年了送你们个鞭炮"
+    },
+    {
+      "start_seconds": 94,
+      "end_seconds": 96,
+      "text": "暴主生生 辞救岁"
+    },
+    {
+      "start_seconds": 96,
+      "end_seconds": 97,
+      "text": "诶 鸭子呢"
+    },
+    {
+      "start_seconds": 97,
+      "end_seconds": 99,
+      "text": "哦 什么鬼"
+    },
+    {
+      "start_seconds": 101,
+      "end_seconds": 103,
+      "text": "快 我帮你出来"
+    },
+    {
+      "start_seconds": 103,
+      "end_seconds": 105,
+      "text": "怎么还会顿地树呢"
+    },
+    {
+      "start_seconds": 105,
+      "end_seconds": 106,
+      "text": "你没事吧"
+    },
+    {
+      "start_seconds": 106,
+      "end_seconds": 107,
+      "text": "抱歉啊 刚才没弄好"
+    },
+    {
+      "start_seconds": 107,
+      "end_seconds": 108,
+      "text": "我陪你一个玩具吧"
+    },
+    {
+      "start_seconds": 113,
+      "end_seconds": 114,
+      "text": "修车店老板"
+    },
+    {
+      "start_seconds": 114,
+      "end_seconds": 115,
+      "text": "过年好啊"
+    },
+    {
+      "start_seconds": 116,
+      "end_seconds": 117,
+      "text": "诶 老板"
+    },
+    {
+      "start_seconds": 117,
+      "end_seconds": 119,
+      "text": "你嘴上有只苍蝇"
+    },
+    {
+      "start_seconds": 119,
+      "end_seconds": 123,
+      "text": "我帮你把它赶走哈"
+    },
+    {
+      "start_seconds": 123,
+      "end_seconds": 123,
+      "text": "鸡哥"
+    },
+    {
+      "start_seconds": 123,
+      "end_seconds": 125,
+      "text": "过年没回家下蛋啊"
+    },
+    {
+      "start_seconds": 125,
+      "end_seconds": 126,
+      "text": "春节快乐"
+    },
+    {
+      "start_seconds": 126,
+      "end_seconds": 127,
+      "text": "我请你喝个饮料吧"
+    },
+    {
+      "start_seconds": 128,
+      "end_seconds": 129,
+      "text": "生气了"
+    },
+    {
+      "start_seconds": 129,
+      "end_seconds": 131,
+      "text": "这么小气呢"
+    },
+    {
+      "start_seconds": 131,
+      "end_seconds": 132,
+      "text": "你冷静好不好"
+    },
+    {
+      "start_seconds": 132,
+      "end_seconds": 133,
+      "text": "你这样影响下蛋的"
+    },
+    {
+      "start_seconds": 136,
+      "end_seconds": 136,
+      "text": "我去"
+    },
+    {
+      "start_seconds": 136,
+      "end_seconds": 137,
+      "text": "对自己这么狠啊"
+    },
+    {
+      "start_seconds": 137,
+      "end_seconds": 138,
+      "text": "不是"
+    },
+    {
+      "start_seconds": 138,
+      "end_seconds": 139,
+      "text": "你别追我"
+    },
+    {
+      "start_seconds": 139,
+      "end_seconds": 141,
+      "text": "你自己卡当的"
+    },
+    {
+      "start_seconds": 141,
+      "end_seconds": 142,
+      "text": "你给我冷静"
+    },
+    {
+      "start_seconds": 145,
+      "end_seconds": 145,
+      "text": "完了"
+    },
+    {
+      "start_seconds": 146,
+      "end_seconds": 147,
+      "text": "鸡哥"
+    },
+    {
+      "start_seconds": 147,
+      "end_seconds": 148,
+      "text": "你没事吧"
+    },
+    {
+      "start_seconds": 148,
+      "end_seconds": 149,
+      "text": "鸡哥"
+    },
+    {
+      "start_seconds": 150,
+      "end_seconds": 151,
+      "text": "好了"
+    },
+    {
+      "start_seconds": 151,
+      "end_seconds": 151,
+      "text": "不闹了"
+    },
+    {
+      "start_seconds": 151,
+      "end_seconds": 153,
+      "text": "奶奶快从太空回来了"
+    },
+    {
+      "start_seconds": 153,
+      "end_seconds": 155,
+      "text": "把年夜饭给她准备好"
+    },
+    {
+      "start_seconds": 155,
+      "end_seconds": 155,
+      "text": "奶奶"
+    },
+    {
+      "start_seconds": 155,
+      "end_seconds": 156,
+      "text": "这一年你辛苦了"
+    },
+    {
+      "start_seconds": 156,
+      "end_seconds": 157,
+      "text": "非来非去的"
+    },
+    {
+      "start_seconds": 157,
+      "end_seconds": 158,
+      "text": "今天就让我喂你吧"
+    },
+    {
+      "start_seconds": 158,
+      "end_seconds": 159,
+      "text": "嗯"
+    },
+    {
+      "start_seconds": 159,
+      "end_seconds": 160,
+      "text": "我给你抽盲盒"
+    },
+    {
+      "start_seconds": 160,
+      "end_seconds": 161,
+      "text": "抽到哪个吃哪个"
+    },
+    {
+      "start_seconds": 161,
+      "end_seconds": 161,
+      "text": "哎"
+    },
+    {
+      "start_seconds": 161,
+      "end_seconds": 162,
+      "text": "运气真好"
+    },
+    {
+      "start_seconds": 162,
+      "end_seconds": 163,
+      "text": "红薯"
+    },
+    {
+      "start_seconds": 163,
+      "end_seconds": 165,
+      "text": "来 我为你"
+    },
+    {
+      "start_seconds": 165,
+      "end_seconds": 167,
+      "text": "耶 新年快乐"
+    }
+  ]
+}
