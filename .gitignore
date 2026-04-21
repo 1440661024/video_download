@@ -8,5 +8,15 @@ backend/data/
 backend/app/__pycache__/
 backend/app/services/__pycache__/
 backend/app/routers/__pycache__/
-
 backend/tests/__pycache__/
+
+# Sensitive files
+backend/.env
+*.log
+backend/temp/
+backend/temp_summary/
+backend/node_modules/
+**/__pycache__/
+.pytest_cache/
+NVIDIA Corporation/
+.vscode/
