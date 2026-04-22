@@ -15,8 +15,17 @@ backend/.env
 *.log
 backend/temp/
 backend/temp_summary/
+backend/temp_summary_perf_probe/
 backend/node_modules/
 **/__pycache__/
 .pytest_cache/
 NVIDIA Corporation/
 .vscode/
+docs/deployment-guide.md
+backend/test_api.py
+backend/.dockerignore
+backend/Dockerfile
+docker-compose.yml
+frontend/.dockerignore
+frontend/Dockerfile
+frontend/deploy/

@@ -36,6 +36,9 @@ class TranscriptService:
         preferred_language: str | None,
         source_url: str | None = None,
     ) -> TranscriptBundle:
+        logger.info("build_bundle: subtitles=%s, auto_captions=%s, _summary_media_url=%s, source_url=%s",
+                    bool(info.get("subtitles")), bool(info.get("automatic_captions")),
+                    info.get("_summary_media_url", ""), source_url)
         if source_url:
             cached_bundle = self.cache_store.load_transcript(
                 url=source_url,
@@ -66,14 +69,25 @@ class TranscriptService:
 
         asr_source_url = str(info.get("_summary_media_url") or source_url or "").strip()
         if asr_source_url:
-            asr_bundle = self._build_from_asr(asr_source_url, preferred_language)
+            logger.info("build_bundle: attempting ASR with url=%s", asr_source_url)
+            try:
+                asr_bundle = self._build_from_asr(asr_source_url, preferred_language)
+            except AsrTranscriptionError as exc:
+                logger.warning("build_bundle: ASR failed with code=%s message=%s", exc.code, exc.message)
+                raise
             if asr_bundle:
+                logger.info("build_bundle: ASR succeeded, segments=%d", asr_bundle.segment_count)
                 return self._persist_bundle(source_url, preferred_language, asr_bundle)
+            logger.warning("build_bundle: ASR returned None, falling back to metadata")
+        else:
+            logger.warning("build_bundle: no ASR source URL available")
 
         metadata_bundle = self._build_from_metadata(info, preferred_language)
         if metadata_bundle:
+            logger.info("build_bundle: using metadata fallback, segments=%d", metadata_bundle.segment_count)
             return self._persist_bundle(source_url, preferred_language, metadata_bundle)
 
+        logger.warning("build_bundle: no metadata available, returning empty bundle")
         return self._persist_bundle(
             source_url,
             preferred_language,
@@ -113,20 +127,25 @@ class TranscriptService:
         if not track or not track.get("url"):
             return None
 
-        raw_text = self._fetch_track(str(track["url"]))
-        segments = self._normalize_segments(
-            self._parse_track(raw_text, str(track.get("ext") or "")),
-            preferred_language,
-        )
-        if not segments:
-            return None
+        try:
+            raw_text = self._fetch_track(str(track["url"]))
+            segments = self._normalize_segments(
+                self._parse_track(raw_text, str(track.get("ext") or "")),
+                preferred_language,
+            )
+            if not segments:
+                return None
 
-        return TranscriptBundle(
-            source_type=source_type,
-            language=language_code,
-            segments=segments,
-            fallback_used=False,
-        )
+            return TranscriptBundle(
+                source_type=source_type,
+                language=language_code,
+                segments=segments,
+                fallback_used=False,
+            )
+        except httpx.HTTPError as exc:
+            # 字幕获取失败（如 429 限流），返回 None 以便回退到其他方式
+            logger.warning("Failed to fetch %s track for language %s: %s", source_type, language_code, exc)
+            return None
 
     def _build_from_bilibili_api(
         self,
@@ -142,35 +161,40 @@ class TranscriptService:
         if not bvid:
             return None
 
-        headers = {
-            "User-Agent": "Mozilla/5.0",
-            "Referer": webpage_url or "https://www.bilibili.com/",
-        }
-        response = httpx.get(
-            "https://api.bilibili.com/x/web-interface/view",
-            params={"bvid": bvid},
-            headers=headers,
-            timeout=30.0,
-        )
-        response.raise_for_status()
-        payload = response.json().get("data") or {}
-        subtitle_list = ((payload.get("subtitle") or {}).get("list") or [])
-        subtitle = self._pick_bilibili_subtitle(subtitle_list, preferred_language)
-        subtitle_url = str(subtitle.get("subtitle_url") or "").strip() if subtitle else ""
-        if not subtitle_url:
-            return None
+        try:
+            headers = {
+                "User-Agent": "Mozilla/5.0",
+                "Referer": webpage_url or "https://www.bilibili.com/",
+            }
+            response = httpx.get(
+                "https://api.bilibili.com/x/web-interface/view",
+                params={"bvid": bvid},
+                headers=headers,
+                timeout=30.0,
+            )
+            response.raise_for_status()
+            payload = response.json().get("data") or {}
+            subtitle_list = ((payload.get("subtitle") or {}).get("list") or [])
+            subtitle = self._pick_bilibili_subtitle(subtitle_list, preferred_language)
+            subtitle_url = str(subtitle.get("subtitle_url") or "").strip() if subtitle else ""
+            if not subtitle_url:
+                return None
 
-        raw_text = self._fetch_track(self._normalize_bilibili_subtitle_url(subtitle_url))
-        segments = self._normalize_segments(self._parse_bilibili_json(raw_text), preferred_language)
-        if not segments:
-            return None
+            raw_text = self._fetch_track(self._normalize_bilibili_subtitle_url(subtitle_url))
+            segments = self._normalize_segments(self._parse_bilibili_json(raw_text), preferred_language)
+            if not segments:
+                return None
 
-        return TranscriptBundle(
-            source_type="human_subtitles",
-            language=str(subtitle.get("lan") or preferred_language or "zh"),
-            segments=segments,
-            fallback_used=False,
-        )
+            return TranscriptBundle(
+                source_type="human_subtitles",
+                language=str(subtitle.get("lan") or preferred_language or "zh"),
+                segments=segments,
+                fallback_used=False,
+            )
+        except (httpx.HTTPError, json.JSONDecodeError, KeyError) as exc:
+            # Bilibili API 失败，返回 None 以便回退到其他方式
+            logger.warning("Failed to fetch Bilibili subtitles for bvid %s: %s", bvid, exc)
+            return None
 
     def _build_from_asr(self, source_url: str, preferred_language: str | None) -> TranscriptBundle | None:
         try:

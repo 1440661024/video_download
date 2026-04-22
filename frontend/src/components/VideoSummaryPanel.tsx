@@ -468,6 +468,10 @@ const tabs: Array<{ id: SummaryTab; label: string; icon: typeof FileText }> = [
   { id: 'qa', label: t('AI 问答'), icon: MessageSquareText },
 ]
 
+function getCanonicalVideoUrl(result: VideoMeta) {
+  return result.source_url ?? result.webpage_url
+}
+
 export function VideoSummaryPanel({
   result,
   canUseAi,
@@ -519,6 +523,7 @@ export function VideoSummaryPanel({
   const formattedSummary = useMemo(() => formatMarkdownToHtml(summary), [summary])
   const parsedSummarySections = useMemo(() => robustParseSummarySections(summary), [summary])
   const sourceBadge = useMemo(() => getSourceBadge(sourceStatus), [sourceStatus])
+  const canonicalVideoUrl = useMemo(() => getCanonicalVideoUrl(result), [result])
   const transcriptCountLabel = useMemo(
     () => `${transcriptSegments.length || sourceStatus?.segment_count || 0} 段`,
     [sourceStatus?.segment_count, transcriptSegments.length],
@@ -555,7 +560,7 @@ export function VideoSummaryPanel({
     qaStreamRef.current?.close()
     summaryStreamRef.current = null
     qaStreamRef.current = null
-  }, [result.source_url])
+  }, [canonicalVideoUrl])
 
   useEffect(() => {
     return () => {
@@ -634,12 +639,15 @@ export function VideoSummaryPanel({
     setActiveTab('summary')
     setIsGeneratingSummary(true)
 
-    const stream = openVideoSummaryStream(result.source_url)
+    const stream = openVideoSummaryStream(canonicalVideoUrl)
     summaryStreamRef.current = stream
 
-    stream.onmessage = (event) => {
+    stream.addEventListener('summary', (event) => {
+      if (!(event instanceof MessageEvent)) {
+        return
+      }
       setSummary((current) => current + event.data)
-    }
+    })
 
     stream.addEventListener('source-status', (event) => {
       if (!(event instanceof MessageEvent)) {
@@ -727,7 +735,7 @@ export function VideoSummaryPanel({
     setIsLoadingTranscript(true)
     setTranscriptError(null)
     try {
-      const data = await getVideoTranscript(result.source_url)
+      const data = await getVideoTranscript(canonicalVideoUrl)
       setTranscript(data.transcript)
       setTranscriptSegments(data.segments)
       if (data.source_status) {
@@ -753,7 +761,7 @@ export function VideoSummaryPanel({
     setMindmapError(null)
     setActiveTab('mindmap')
     try {
-      const data = await getVideoMindmap(result.source_url)
+      const data = await getVideoMindmap(canonicalVideoUrl)
       setMindmapData(data.mindmap)
       if (data.source_status) {
         setSourceStatus(data.source_status)
@@ -782,12 +790,15 @@ export function VideoSummaryPanel({
     setIsAsking(true)
     setActiveTab('qa')
 
-    const stream = openVideoQuestionStream(result.source_url, nextQuestion)
+    const stream = openVideoQuestionStream(canonicalVideoUrl, nextQuestion)
     qaStreamRef.current = stream
 
-    stream.onmessage = (event) => {
+    stream.addEventListener('answer', (event) => {
+      if (!(event instanceof MessageEvent)) {
+        return
+      }
       setAnswer((current) => current + event.data)
-    }
+    })
 
     stream.addEventListener('done', () => {
       setIsAsking(false)

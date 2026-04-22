@@ -4,6 +4,14 @@ from app.services.summary_service import SummaryServiceError
 from app.services.transcript_models import TranscriptBundle, TranscriptSegment
 
 
+def test_sse_message_preserves_trailing_newline_for_markdown_lists():
+    payload = summary_stream._sse_message("## Heading\n* Point 1\n", event="summary")
+
+    assert "data: ## Heading\n" in payload
+    assert "data: * Point 1\n" in payload
+    assert "data: \n\n" in payload
+
+
 def test_summarize_stream_success(monkeypatch, member_client):
     bundle = TranscriptBundle(
         source_type="human_subtitles",
@@ -155,7 +163,13 @@ def test_summarize_stream_emits_preview_summary_for_asr(monkeypatch, member_clie
     monkeypatch.setattr(
         summary_stream.document_summary_service,
         "get_video_info",
-        lambda *, url: {"title": "Demo", "subtitles": {}, "automatic_captions": {}, "webpage_url": "https://www.douyin.com/video/demo"},
+        lambda *, url: {
+            "title": "Demo",
+            "duration": 120,
+            "subtitles": {},
+            "automatic_captions": {},
+            "webpage_url": "https://www.douyin.com/video/demo",
+        },
     )
     monkeypatch.setattr(
         summary_stream.document_summary_service,
@@ -184,6 +198,71 @@ def test_summarize_stream_emits_preview_summary_for_asr(monkeypatch, member_clie
     assert "event: preview-summary" in response.text
     assert "预览内容" in response.text
     assert "event: summary-reset" in response.text
+
+
+def test_summarize_stream_skips_preview_summary_for_long_asr_video(monkeypatch, member_client):
+    bundle = TranscriptBundle(
+        source_type="speech_to_text",
+        language="zh",
+        segments=[TranscriptSegment(start_seconds=0, end_seconds=12, text="demo" * 40)],
+        fallback_used=True,
+    )
+
+    monkeypatch.setattr(
+        summary_stream.document_summary_service,
+        "get_video_info",
+        lambda *, url: {
+            "title": "Demo",
+            "duration": 600,
+            "subtitles": {},
+            "automatic_captions": {},
+            "webpage_url": "https://www.douyin.com/video/demo",
+        },
+    )
+    monkeypatch.setattr(
+        summary_stream.document_summary_service,
+        "build_asr_preview_summary",
+        lambda *, info, url, preferred_language: (_ for _ in ()).throw(
+            AssertionError("long ASR video should not build preview summary")
+        ),
+    )
+    monkeypatch.setattr(
+        summary_stream.document_summary_service,
+        "build_transcript_bundle",
+        lambda *, info, url, preferred_language: bundle,
+    )
+    monkeypatch.setattr(
+        summary_stream.document_summary_service,
+        "_segments_to_text",
+        lambda segments, max_chars: "[0:00] " + ("demo transcript " * 12),
+    )
+    monkeypatch.setattr(
+        summary_stream.document_summary_service,
+        "stream_summary_from_context",
+        lambda *, url, preferred_language, info, transcript_text: iter(["final summary"]),
+    )
+
+    response = member_client.get("/api/summarize", params={"video_url": "https://example.com/video"})
+
+    assert response.status_code == 200
+    assert "event: preview-summary" not in response.text
+    assert "event: summary-reset" not in response.text
+
+
+def test_should_generate_asr_preview_skips_long_video():
+    service = summary_stream.document_summary_service
+
+    assert (
+        service.should_generate_asr_preview(
+            {
+                "duration": 181,
+                "subtitles": {},
+                "automatic_captions": {},
+                "webpage_url": "https://www.douyin.com/video/demo",
+            }
+        )
+        is False
+    )
 
 
 def test_document_summary_accepts_asr_source():

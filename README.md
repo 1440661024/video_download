@@ -70,6 +70,7 @@ AI 总结当前按固定优先级获取文本：
 video_download/
 ├─ frontend/          # React 前端
 ├─ backend/           # FastAPI 后端
+├─ docker-compose.yml # 标准容器编排
 ├─ docs/              # 项目文档
 └─ README.md
 ```
@@ -148,12 +149,67 @@ cd backend
 
 当前后端通过 `backend/.env` 加载关键配置，包括：
 
+- `APP_ENV`
 - `AI_API_KEY`
 - `AI_API_BASE_URL`
 - `AI_MODEL`
 - `STRIPE_SECRET_KEY`
 - `STRIPE_WEBHOOK_SECRET`
 - `FRONTEND_BASE_URL`
+- `BACKEND_CORS_ORIGINS`
+- `FFMPEG_LOCATION`
+
+## 标准可部署结构
+
+当前仓库已补齐适合 Alibaba Cloud Linux / 宝塔环境继续落地的标准部署骨架：
+
+- `backend/Dockerfile`：Python 3.12 + FastAPI + FFmpeg
+- `frontend/Dockerfile`：Node 构建 + Nginx 托管静态站点
+- `frontend/deploy/nginx.conf`：前端静态资源 + `/api` 反向代理到后端
+- `docker-compose.yml`：一键启动前后端容器
+- `backend/pytest.ini`：修复后端测试导入路径，统一 `pytest` 启动方式
+
+### Docker 启动
+
+1. 复制并填写后端环境变量：
+
+```powershell
+Copy-Item backend\.env.example backend\.env
+```
+
+2. 启动容器：
+
+```powershell
+docker compose up --build -d
+```
+
+3. 默认访问方式：
+
+- 前端：`http://服务器公网IP/`
+- 后端健康检查：`http://服务器公网IP/api/health`
+
+### 生产配置说明
+
+- 前端容器内部通过 Nginx 反代 `/api` 到后端，所以 `VITE_API_BASE_URL` 默认留空即可。
+- 如果前后端未来拆域部署，需要在前端构建时设置 `VITE_API_BASE_URL`，并同步设置后端 `BACKEND_CORS_ORIGINS`。
+- `COOKIE_SECURE=true` 只应在 HTTPS 环境启用；当前你先用公网 IP + HTTP 时保持 `false`。
+- `FFMPEG_LOCATION` 现在支持留空，服务会自动从 Linux 系统 `PATH` 查找 `ffmpeg`。
+
+## 测试与构建
+
+### 前端生产构建
+
+```powershell
+cd frontend
+npm run build
+```
+
+### 后端测试
+
+```powershell
+cd backend
+python -m pytest -q
+```
 
 当前实际 AI 配置为 DeepSeek 官网接口：
 
