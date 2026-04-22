@@ -17,6 +17,8 @@ from app.services.video_service import VideoService
 
 
 class DocumentSummaryService:
+    ASR_PREVIEW_MAX_DURATION_SECONDS = 180
+
     def __init__(
         self,
         *,
@@ -82,6 +84,14 @@ class DocumentSummaryService:
         try:
             return self.transcript_service.build_bundle(info, preferred_language, source_url=url)
         except AsrTranscriptionError as exc:
+            refreshed_bundle = self._retry_bundle_after_refresh(
+                info=info,
+                url=url,
+                preferred_language=preferred_language,
+                error=exc,
+            )
+            if refreshed_bundle is not None:
+                return refreshed_bundle
             raise SummaryServiceError(
                 code=exc.code,
                 message=exc.message,
@@ -99,6 +109,48 @@ class DocumentSummaryService:
             return False
         webpage_url = str(info.get("webpage_url") or "").lower()
         return "bilibili.com" not in webpage_url
+
+    def should_generate_asr_preview(self, info: dict[str, Any]) -> bool:
+        if not self.will_likely_use_asr(info):
+            return False
+        duration = self._coerce_duration_seconds(info.get("duration"))
+        if duration is None:
+            return True
+        return duration <= self.ASR_PREVIEW_MAX_DURATION_SECONDS
+
+    def _retry_bundle_after_refresh(
+        self,
+        *,
+        info: dict[str, Any],
+        url: str,
+        preferred_language: str | None,
+        error: AsrTranscriptionError,
+    ) -> TranscriptBundle | None:
+        if error.code != "ASR_AUDIO_DOWNLOAD_FAILED":
+            return None
+        if not self._should_retry_asr_refresh(info=info, url=url):
+            return None
+
+        refreshed_info = self.video_service.extract_info(url)
+        refreshed_media_url = str(refreshed_info.get("_summary_media_url") or "").strip()
+        original_media_url = str(info.get("_summary_media_url") or "").strip()
+        if not refreshed_media_url or refreshed_media_url == original_media_url:
+            return None
+
+        return self.transcript_service.build_bundle(
+            refreshed_info,
+            preferred_language,
+            source_url=url,
+        )
+
+    def _should_retry_asr_refresh(self, *, info: dict[str, Any], url: str) -> bool:
+        source_candidates = [
+            str(info.get("webpage_url") or "").lower(),
+            str(info.get("extractor") or "").lower(),
+            str(info.get("extractor_key") or "").lower(),
+            url.lower(),
+        ]
+        return any("douyin" in candidate for candidate in source_candidates)
 
     def build_asr_preview_summary(
         self,
@@ -341,7 +393,9 @@ class DocumentSummaryService:
             return False
 
         char_count = len(normalized)
-        if char_count >= 120:
+        
+        # 降低阈值：从 120 降到 80
+        if char_count >= 80:
             return True
 
         duration = info.get("duration")
@@ -350,12 +404,12 @@ class DocumentSummaryService:
         except (TypeError, ValueError):
             duration_seconds = None
 
-        # Short videos often have very little transcript text. As long as ASR or subtitles
-        # produced usable segments, we still allow summarization for these clips.
-        if bundle.segment_count >= 1 and char_count >= 20 and duration_seconds is not None and duration_seconds <= 90:
+        # 短视频条件：降低字符要求从 20 到 15
+        if bundle.segment_count >= 1 and char_count >= 15 and duration_seconds is not None and duration_seconds <= 90:
             return True
 
-        if bundle.source_type == "speech_to_text" and bundle.segment_count >= 3 and char_count >= 20:
+        # ASR 条件：降低段落要求从 3 到 2，字符要求从 20 到 15
+        if bundle.source_type == "speech_to_text" and bundle.segment_count >= 2 and char_count >= 15:
             return True
 
         return False
@@ -474,3 +528,11 @@ class DocumentSummaryService:
         if hours:
             return f"{hours:d}:{minutes:02d}:{secs:02d}"
         return f"{minutes:d}:{secs:02d}"
+
+    def _coerce_duration_seconds(self, value: Any) -> int | None:
+        if value in (None, ""):
+            return None
+        try:
+            return max(0, int(round(float(value))))
+        except (TypeError, ValueError):
+            return None

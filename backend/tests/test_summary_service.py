@@ -1,4 +1,8 @@
+import pytest
+
 from app.schemas_summary import VideoQuestionMessage
+from app.services.asr_service import AsrTranscriptionError
+from app.services.document_summary_service import DocumentSummaryService
 from app.services.summary_service import SummaryService, SummaryServiceError
 from app.services.transcript_models import TranscriptBundle, TranscriptSegment
 
@@ -19,6 +23,25 @@ class FakeTranscriptService:
         return self._bundle
 
 
+class RetryTranscriptService:
+    def __init__(self, first_error: AsrTranscriptionError, retry_bundle: TranscriptBundle):
+        self.first_error = first_error
+        self.retry_bundle = retry_bundle
+        self.calls: list[dict] = []
+
+    def build_bundle(self, info, preferred_language, source_url=None):
+        self.calls.append(
+            {
+                "info": info,
+                "preferred_language": preferred_language,
+                "source_url": source_url,
+            }
+        )
+        if len(self.calls) == 1:
+            raise self.first_error
+        return self.retry_bundle
+
+
 class FakeAIClient:
     def __init__(self, responses):
         self._responses = list(responses)
@@ -28,6 +51,16 @@ class FakeAIClient:
 
     def complete_json(self, *, system_prompt: str, user_prompt: str):
         return self._responses.pop(0)
+
+
+class RefreshingVideoService:
+    def __init__(self, refreshed_info):
+        self.refreshed_info = refreshed_info
+        self.calls: list[str] = []
+
+    def extract_info(self, url: str):
+        self.calls.append(url)
+        return self.refreshed_info
 
 
 def test_generate_summary_from_transcript():
@@ -145,3 +178,85 @@ def test_answer_question_from_transcript():
     )
 
     assert "OpenRouter" in answer.answer
+
+
+def test_document_summary_retries_douyin_asr_after_refresh():
+    retry_bundle = TranscriptBundle(
+        source_type="speech_to_text",
+        language="zh",
+        segments=[TranscriptSegment(start_seconds=0, end_seconds=8, text="retry transcript " * 8)],
+        fallback_used=True,
+    )
+    first_error = AsrTranscriptionError(
+        code="ASR_AUDIO_DOWNLOAD_FAILED",
+        message="音频提取失败，暂时无法进行语音识别。",
+        detail="403 Forbidden",
+    )
+    transcript_service = RetryTranscriptService(first_error, retry_bundle)
+    refreshed_info = {
+        "webpage_url": "https://www.douyin.com/video/demo",
+        "extractor": "Douyin",
+        "_summary_media_url": "https://cdn.example.com/fresh.mp4",
+    }
+    service = DocumentSummaryService(
+        video_service=RefreshingVideoService(refreshed_info),
+        transcript_service=transcript_service,
+        ai_client=FakeAIClient([]),
+    )
+    original_info = {
+        "webpage_url": "https://www.douyin.com/video/demo",
+        "extractor": "Douyin",
+        "_summary_media_url": "https://cdn.example.com/stale.mp4",
+    }
+
+    bundle = service.build_transcript_bundle(
+        info=original_info,
+        url="https://www.douyin.com/video/demo",
+        preferred_language="zh-CN",
+    )
+
+    assert bundle is retry_bundle
+    assert len(transcript_service.calls) == 2
+    assert transcript_service.calls[1]["info"]["_summary_media_url"] == "https://cdn.example.com/fresh.mp4"
+
+
+def test_document_summary_keeps_original_asr_error_without_fresh_media():
+    first_error = AsrTranscriptionError(
+        code="ASR_AUDIO_DOWNLOAD_FAILED",
+        message="音频提取失败，暂时无法进行语音识别。",
+        detail="403 Forbidden",
+    )
+    transcript_service = RetryTranscriptService(
+        first_error,
+        TranscriptBundle(
+            source_type="speech_to_text",
+            language="zh",
+            segments=[TranscriptSegment(start_seconds=0, end_seconds=5, text="demo")],
+            fallback_used=True,
+        ),
+    )
+    service = DocumentSummaryService(
+        video_service=RefreshingVideoService(
+            {
+                "webpage_url": "https://www.douyin.com/video/demo",
+                "extractor": "Douyin",
+                "_summary_media_url": "https://cdn.example.com/stale.mp4",
+            }
+        ),
+        transcript_service=transcript_service,
+        ai_client=FakeAIClient([]),
+    )
+    original_info = {
+        "webpage_url": "https://www.douyin.com/video/demo",
+        "extractor": "Douyin",
+        "_summary_media_url": "https://cdn.example.com/stale.mp4",
+    }
+
+    with pytest.raises(SummaryServiceError) as exc_info:
+        service.build_transcript_bundle(
+            info=original_info,
+            url="https://www.douyin.com/video/demo",
+            preferred_language="zh-CN",
+        )
+
+    assert exc_info.value.code == "ASR_AUDIO_DOWNLOAD_FAILED"

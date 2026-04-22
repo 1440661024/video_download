@@ -1,4 +1,5 @@
 import os
+import shutil
 from pathlib import Path
 
 
@@ -36,10 +37,20 @@ def _read_int(name: str, default: int) -> int:
         return default
 
 
+def _read_list(name: str, default: list[str]) -> list[str]:
+    raw = os.getenv(name)
+    if raw is None:
+        return default
+    values = [item.strip() for item in raw.replace("\n", ",").split(",")]
+    normalized = [item for item in values if item]
+    return normalized or default
+
+
 BASE_DIR = Path(__file__).resolve().parent.parent
 _load_env_file(BASE_DIR / ".env")
 DATA_DIR = BASE_DIR / "data"
 DATA_DIR.mkdir(parents=True, exist_ok=True)
+APP_ENV = os.getenv("APP_ENV", "development").strip().lower()
 DATABASE_URL = os.getenv(
     "DATABASE_URL",
     f"sqlite:///{(DATA_DIR / 'app.db').as_posix()}",
@@ -56,6 +67,10 @@ STRIPE_MEMBERSHIP_CNY_MINOR_UNITS = _read_int(
 )  # 9.90 CNY = 990 分
 
 FRONTEND_BASE_URL = os.getenv("FRONTEND_BASE_URL", "http://localhost:5173").rstrip("/")
+BACKEND_CORS_ORIGINS = _read_list(
+    "BACKEND_CORS_ORIGINS",
+    ["http://localhost:5173", "http://127.0.0.1:5173"],
+)
 AI_MEMBERSHIP_DAYS = _read_int("AI_MEMBERSHIP_DAYS", 30)
 COOKIE_SECURE = os.getenv("COOKIE_SECURE", "false").strip().lower() in ("1", "true", "yes")
 
@@ -65,7 +80,7 @@ TEMP_DOWNLOAD_DIR.mkdir(parents=True, exist_ok=True)
 TEMP_SUMMARY_DIR.mkdir(parents=True, exist_ok=True)
 
 MAX_DIRECT_LINK_SIZE = 500 * 1024 * 1024
-FFMPEG_LOCATION = Path(os.getenv("FFMPEG_LOCATION", "C:/Dev/ffmpeg/bin"))
+FFMPEG_LOCATION = os.getenv("FFMPEG_LOCATION", "").strip() or None
 
 AI_API_KEY = os.getenv("AI_API_KEY", "").strip() or None
 AI_API_BASE_URL = os.getenv("AI_API_BASE_URL", "https://api.openai.com/v1").rstrip("/")
@@ -77,3 +92,26 @@ ASR_MODEL_SIZE = os.getenv("ASR_MODEL_SIZE", "small")
 ASR_DEVICE = os.getenv("ASR_DEVICE", "cpu")
 ASR_COMPUTE_TYPE = os.getenv("ASR_COMPUTE_TYPE", "int8")
 ASR_BEAM_SIZE = _read_int("ASR_BEAM_SIZE", 1)
+
+
+def resolve_ffmpeg_location() -> str | None:
+    if FFMPEG_LOCATION:
+        return FFMPEG_LOCATION
+    return shutil.which("ffmpeg")
+
+
+def resolve_ffmpeg_executable() -> Path | None:
+    raw_location = resolve_ffmpeg_location()
+    if not raw_location:
+        return None
+
+    candidate = Path(raw_location)
+    if candidate.is_dir():
+        binary_name = "ffmpeg.exe" if os.name == "nt" else "ffmpeg"
+        candidate = candidate / binary_name
+
+    if candidate.exists():
+        return candidate
+
+    resolved = shutil.which(raw_location)
+    return Path(resolved) if resolved else None

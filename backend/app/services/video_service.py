@@ -16,7 +16,7 @@ from urllib.parse import parse_qs, urlparse, urlunparse
 import httpx
 from yt_dlp import DownloadError, YoutubeDL
 
-from app.config import FFMPEG_LOCATION, MAX_DIRECT_LINK_SIZE, TEMP_DOWNLOAD_DIR
+from app.config import MAX_DIRECT_LINK_SIZE, TEMP_DOWNLOAD_DIR, resolve_ffmpeg_location
 from app.schemas import DownloadStrategy, VideoFormatOption, VideoMeta
 
 
@@ -507,15 +507,35 @@ class VideoService:
             "quiet": True,
             "no_warnings": True,
             "noplaylist": True,
+            # YouTube 优化配置
+            "http_headers": {
+                "User-Agent": (
+                    "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
+                    "AppleWebKit/537.36 (KHTML, like Gecko) "
+                    "Chrome/131.0.0.0 Safari/537.36"
+                ),
+                "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+                "Accept-Language": "en-us,en;q=0.5",
+                "Sec-Fetch-Mode": "navigate",
+            },
+            # 避免 YouTube 限流
+            "extractor_args": {
+                "youtube": {
+                    "player_client": ["android", "web"],
+                    "player_skip": ["webpage", "configs"],
+                }
+            },
         }
         self.douyin = DouyinResolver()
 
     def _ydl(self, extra: dict[str, Any] | None = None) -> YoutubeDL:
         opts = {
             **self.base_opts,
-            "ffmpeg_location": str(FFMPEG_LOCATION),
             **(extra or {}),
         }
+        ffmpeg_location = resolve_ffmpeg_location()
+        if ffmpeg_location:
+            opts["ffmpeg_location"] = ffmpeg_location
         return YoutubeDL(opts)
 
     def _normalize_source_url(self, url: str) -> str:
@@ -579,12 +599,21 @@ class VideoService:
             return copy.deepcopy(cached) if cached is not None else None
 
     def _save_cached_info(self, url: str, info: dict[str, Any]) -> None:
+        alias_keys = {
+            self._normalize_source_url(url),
+        }
+        webpage_url = str(info.get("webpage_url") or "").strip()
+        if webpage_url:
+            alias_keys.add(self._normalize_source_url(webpage_url))
+
         with self._info_cache_lock:
-            # Keep the cache very small and simple: just the most recent parse results.
-            if len(self._info_cache) >= 32 and url not in self._info_cache:
+            # Keep the cache small, but store the same info under equivalent URL aliases
+            # so parse -> summary/transcript doesn't re-run extract_info on the same video.
+            while len(self._info_cache) + len([key for key in alias_keys if key not in self._info_cache]) > 32:
                 oldest_key = next(iter(self._info_cache))
                 self._info_cache.pop(oldest_key, None)
-            self._info_cache[url] = copy.deepcopy(info)
+            for alias_key in alias_keys:
+                self._info_cache[alias_key] = copy.deepcopy(info)
 
     def build_strategy(self, format_info: dict[str, Any] | None) -> DownloadStrategy:
         if not format_info:

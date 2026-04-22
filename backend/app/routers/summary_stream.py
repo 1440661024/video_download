@@ -25,7 +25,9 @@ document_summary_service = DocumentSummaryService()
 
 
 def _sse_message(data: str, event: str | None = None) -> str:
-    lines = data.splitlines() or [""]
+    # Preserve trailing newlines so streamed Markdown keeps its structure.
+    normalized = data.replace("\r\n", "\n").replace("\r", "\n")
+    lines = normalized.split("\n")
     payload: list[str] = []
     if event:
         payload.append(f"event: {event}")
@@ -46,7 +48,7 @@ def _progress_payload(stage: str, message: str) -> str:
     return json.dumps({"stage": stage, "message": message}, ensure_ascii=False)
 
 
-def _buffered_sse_chunks(chunks: Iterable[str]) -> Iterable[str]:
+def _buffered_sse_chunks(chunks: Iterable[str], event: str | None = None) -> Iterable[str]:
     buffer = ""
     separators = {"\n", "。", "！", "？", ".", "!", "?"}
     for chunk in chunks:
@@ -54,10 +56,10 @@ def _buffered_sse_chunks(chunks: Iterable[str]) -> Iterable[str]:
             continue
         buffer += chunk
         if any(separator in chunk for separator in separators) or len(buffer) >= 120:
-            yield _sse_message(buffer)
+            yield _sse_message(buffer, event=event)
             buffer = ""
     if buffer:
-        yield _sse_message(buffer)
+        yield _sse_message(buffer, event=event)
 
 
 def _claim_summary_access(user: User, db: Session) -> tuple[bool, bool, datetime | None]:
@@ -120,18 +122,19 @@ def summarize_video(
                     _progress_payload("preparing", "未找到可用字幕，正在准备语音识别..."),
                     event="progress",
                 )
-                preview_summary = document_summary_service.build_asr_preview_summary(
-                    info=info,
-                    url=video_url,
-                    preferred_language=preferred_language,
-                )
-                if preview_summary:
-                    preview_sent = True
-                    yield _sse_message(preview_summary, event="preview-summary")
-                    yield _sse_message(
-                        _progress_payload("generating", "已生成预览，正在补全完整总结..."),
-                        event="progress",
+                if document_summary_service.should_generate_asr_preview(info):
+                    preview_summary = document_summary_service.build_asr_preview_summary(
+                        info=info,
+                        url=video_url,
+                        preferred_language=preferred_language,
                     )
+                    if preview_summary:
+                        preview_sent = True
+                        yield _sse_message(preview_summary, event="preview-summary")
+                        yield _sse_message(
+                            _progress_payload("generating", "已生成预览，正在补全完整总结..."),
+                            event="progress",
+                        )
             bundle = document_summary_service.build_transcript_bundle(
                 info=info,
                 url=video_url,
@@ -168,7 +171,8 @@ def summarize_video(
                     preferred_language=preferred_language,
                     info=info,
                     transcript_text=transcript_text,
-                )
+                ),
+                event="summary",
             ):
                 emitted_summary_content = True
                 yield chunk
@@ -253,7 +257,8 @@ def stream_question_answer(
                     url=video_url,
                     question=question,
                     preferred_language=preferred_language,
-                )
+                ),
+                event="answer",
             )
             yield _sse_message("[DONE]", event="done")
         except SummaryServiceError as exc:

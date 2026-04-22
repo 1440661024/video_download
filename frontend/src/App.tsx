@@ -168,6 +168,10 @@ const vipPlanFeatures = [
   '专属客服优先支持',
 ]
 
+function getCanonicalVideoUrl(result: VideoMeta) {
+  return result.webpage_url ?? result.source_url
+}
+
 function getThumbnailSrc(result: VideoMeta) {
   if (!result.thumbnail) {
     return null
@@ -316,6 +320,7 @@ function App() {
   const selectedFormatOption =
     result?.formats.find((item) => item.format_id === selectedFormat) ?? recommendedFormat
   const thumbnailSrc = result ? getThumbnailSrc(result) : null
+  const canonicalVideoUrl = result ? getCanonicalVideoUrl(result) : null
 
   async function handleParse() {
     const nextUrl = url.trim()
@@ -354,7 +359,7 @@ function App() {
     setError(null)
 
     try {
-      const payload = await getDownloadLink(result.source_url, selectedFormat)
+      const payload = await getDownloadLink(canonicalVideoUrl ?? result.source_url, selectedFormat)
       if (payload.url && payload.strategy.mode === 'direct') {
         const anchor = document.createElement('a')
         anchor.href = payload.url
@@ -367,7 +372,7 @@ function App() {
       }
 
       await downloadVideoFile(
-        result.source_url,
+        canonicalVideoUrl ?? result.source_url,
         selectedFormat,
         `${result.title}.${selectedFormatOption?.ext ?? 'mp4'}`,
       )
